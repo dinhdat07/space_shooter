@@ -27,16 +27,13 @@
     <ClCompile Include="Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Enemy.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Effect.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -44,16 +41,13 @@
     <ClInclude Include="Entity.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Enemy.hpp">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Effect.hpp">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="Player.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="common.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

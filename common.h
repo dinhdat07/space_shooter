@@ -18,5 +18,8 @@ const int SCREEN_HEIGHT = 720;
 const int PLAYER_SPEED = 4;
 const int PLAYER_BULLET_SPEED = 16;
 
+const int ENEMY_SPEED = -4;
+const int ENEMY_BULLET_SPEED = 8;
+
 const int MAX_KEYBOARD_KEYS = 350;
 
