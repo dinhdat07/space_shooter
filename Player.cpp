@@ -92,3 +92,8 @@ void Player::keyUp(SDL_KeyboardEvent* event) {
 }
 
 
+void Player::resetInput() {
+	left = up = right = down = fire = false;
+}
+
+

@@ -13,4 +13,5 @@ public:
 	bool Fire();
 	int getReload();
 	void setReload(int);
+	void resetInput();
 };

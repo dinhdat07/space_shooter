@@ -3,21 +3,22 @@
 
 class Entity {
 protected:
-	int x, y, dx, dy, health;
+	int x, y,health;
+	double dx, dy;
 	SDL_Texture* texture;
 public:
 	Entity();
 	void move();
 	void setX(int);
 	void setY(int);
-	void setDX(int);
-	void setDY(int);
+	void setDX(double);
+	void setDY(double);
 	void setHealth(int);
 	void setTexture(SDL_Texture*);
 	int getX();
 	int getY();
-	int getDX();
-	int getDY();
+	double getDX();
+	double getDY();
 	int getHealth();
 	SDL_Texture* getTexture();
 	virtual ~Entity();

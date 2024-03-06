@@ -26,11 +26,11 @@ void Entity::setY(int y) {
 	this->y = y;
 }
 
-void Entity::setDX(int dx) {
+void Entity::setDX(double dx) {
 	this->dx = dx;
 }
 
-void Entity::setDY(int dy) {
+void Entity::setDY(double dy) {
 	this->dy = dy;
 }
 
@@ -46,11 +46,11 @@ int Entity::getY() {
 	return y;
 }
 
-int Entity::getDX() {
+double Entity::getDX() {
 	return dx;
 }
 
-int Entity::getDY() {
+double Entity::getDY() {
 	return dy;
 }
 

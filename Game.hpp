@@ -3,36 +3,35 @@
 
 #include "Entity.hpp"
 #include "Player.hpp"
-
+#include "Enemy.hpp"
 
 class Game {
 private:
-    struct {
-        SDL_Renderer* renderer;
-        SDL_Window* window;
-        SDL_Texture* background;
-    } app;
+	struct {
+		SDL_Renderer* renderer;
+		SDL_Window* window;
+	} app;
 
-    int backgroundX;
-    Player player;
+	Player player;
+	Entity playerBullet;
+	std::vector <Entity> Bullets;
 
-    Entity bullet;
+	Enemy* enemy;
+	Entity enemyBullet;
+	int enemySpawnTimer;
+	std::vector <Enemy*> Enemies;
 
-    std::vector<Entity> Bullets;
-
-    void initGame();
-    void initPlayer();
-    void getInput();
-    void prepareScene();
-    void presentEntities();
-    void presentScene();
-    
-    //void scrollBackground();
-    //void drawBackground(SDL_Texture*, int);
-
-    SDL_Texture* loadTexture(std::string);
-    void draw(SDL_Texture*, int, int);
-
-public: 
-    void start();
+	void prepareScene();
+	int backgroundX;
+	//int score, highScore;
+	void initGame();
+	void initPlayer();
+	void presentEntities();
+	void getInput();
+	void presentScene();
+	void draw(SDL_Texture*, int, int);
+	SDL_Texture* loadTexture(std::string);
+	bool detectCollision(int, int, int, int, int, int, int, int);
+public:
+	void start();
 };
