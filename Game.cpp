@@ -36,12 +36,9 @@ void Game::initGame() {
 		exit(-1);
 	}
 
-	backgroundX = 0;
-
 	enemySpawnTimer = 60;
 
 	player.setTexture(loadTexture("gfx/player.png"));
-
 	playerBullet.setDX(PLAYER_BULLET_SPEED);
 	playerBullet.setHealth(1);
 	playerBullet.setTexture(loadTexture("gfx/playerBullet.png"));
@@ -73,8 +70,10 @@ void Game::getInput() {
 }
 
 void Game::presentEntities() {
-	player.move();
-	draw(player.getTexture(), player.getX(), player.getY()); //Draw player plane
+	if (player.getHealth() > 0) {
+		player.move();
+		draw(player.getTexture(), player.getX(), player.getY());
+	}
 
 	int wP, hP;
 	if (player.Fire() == true && player.getReload() == 0) {
@@ -83,6 +82,8 @@ void Game::presentEntities() {
 		playerBullet.setX(player.getX() + wP/2);
 		playerBullet.setY(player.getY() + hP/2);
 		playerBullet.setDX(PLAYER_BULLET_SPEED);
+		playerBullet.setHealth(1);
+		playerBullet.setSide(1);
 		player.setReload(5);
 		Bullets.push_back(playerBullet);
 	}
@@ -103,7 +104,7 @@ void Game::presentEntities() {
 	for (auto i = Enemies.begin(); i != Enemies.end(); ) {
 		int w, h;
 		SDL_QueryTexture((*i)->getTexture(), NULL, NULL, &w, &h);
-		if ((*i)->getX() <= -w) {
+		if ((*i)->getX() <= -w || !(*i)->getHealth()) {
 			i = Enemies.erase(i);
 		}
 		else {
@@ -119,6 +120,8 @@ void Game::presentEntities() {
 				dy /= distance;
 				enemyBullet.setDX(dx * ENEMY_BULLET_SPEED);
 				enemyBullet.setDY(dy * ENEMY_BULLET_SPEED);
+				enemyBullet.setHealth(1);
+				enemyBullet.setSide(0);
 				(*i)->setReload(60);
 				Bullets.push_back(enemyBullet);
 			}
@@ -130,13 +133,33 @@ void Game::presentEntities() {
 
 	//Checking removable bullets
 	for (auto i = Bullets.begin(); i != Bullets.end(); ) {
-		if (i->getX() < 0 || i->getX() > SCREEN_WIDTH || i->getY() < 0 || i->getY() > SCREEN_HEIGHT) {
+		if (i->getX() < 0 || i->getX() > SCREEN_WIDTH || i->getY() < 0 || i->getY() > SCREEN_HEIGHT || !i->getHealth()) {
 			i = Bullets.erase(i);
 		}
 		else {
 			i->move();
 			draw(i->getTexture(), i->getX(), i->getY());
 			i++;
+		}
+	}
+
+	//Check bullet hit plane
+	for (auto i = Bullets.begin(); i != Bullets.end(); i++) {
+		int wB, hB, wP, hP;
+		SDL_QueryTexture(i->getTexture(), NULL, NULL, &wB, &hB);
+		SDL_QueryTexture(player.getTexture(), NULL, NULL, &wP, &hP);
+		if (!i->Side() && detectCollision(i->getX(), i->getY(), wB, hB, player.getX(), player.getY(), wP, hP)) {
+			i->setHealth(0);
+			player.setHealth(0);
+		}
+		for (auto j = Enemies.begin(); j != Enemies.end(); j++) {
+			int wE, hE, wP, hP;
+			SDL_QueryTexture((*j)->getTexture(), NULL, NULL, &wE, &hE);
+			SDL_QueryTexture(player.getTexture(), NULL, NULL, &wP, &hP);
+			if (i->Side() && detectCollision(i->getX(), i->getY(), wB, hB, (*j)->getX(), (*j)->getY(), wE, hE)) {
+				i->setHealth(0);
+				(*j)->setHealth(0);
+			}
 		}
 	}
 }

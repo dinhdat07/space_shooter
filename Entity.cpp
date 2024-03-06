@@ -18,10 +18,6 @@ void Entity::setHealth(int health) {
 	this->health = health;
 }
 
-int Entity::getHealth() {
-	return health;
-}
-
 void Entity::setY(int y) {
 	this->y = y;
 }
@@ -37,6 +33,11 @@ void Entity::setDY(double dy) {
 void Entity::setTexture(SDL_Texture* texture) {
 	this->texture = texture;
 }
+
+void Entity::setSide(int side) {
+	this->side = side;
+}
+
 
 int Entity::getX() {
 	return x;
@@ -56,6 +57,14 @@ double Entity::getDY() {
 
 SDL_Texture* Entity::getTexture() {
 	return texture;
+}
+
+int Entity::getHealth() {
+	return health;
+}
+
+int Entity::Side() {
+	return side;
 }
 
 Entity::~Entity() {
