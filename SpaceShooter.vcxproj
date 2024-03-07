@@ -130,6 +130,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Effect.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -138,6 +139,7 @@
     <ClCompile Include="Player.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Effect.hpp" />
     <ClInclude Include="Enemy.hpp" />
     <ClInclude Include="Entity.hpp" />
     <ClInclude Include="Player.hpp" />
@@ -147,13 +149,16 @@
     <Image Include="gfx\alienBullet.png" />
     <Image Include="gfx\background.png" />
     <Image Include="gfx\enemy.png" />
+    <Image Include="gfx\enemyR.png" />
     <Image Include="gfx\explosion.png" />
     <Image Include="gfx\font.png" />
     <Image Include="gfx\player.png" />
     <Image Include="gfx\playerBullet.png" />
+    <Image Include="gfx\playerR.png" />
     <Image Include="gfx\points.png" />
     <Image Include="gfx\sdl2.png" />
     <Image Include="gfx\shooter.png" />
+    <Image Include="gfx\spaceBackgroundR.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

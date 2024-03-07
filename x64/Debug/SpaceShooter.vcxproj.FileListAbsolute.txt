@@ -1,1 +1,2 @@
+E:\CODING\MyGame\SetUpSDL2\x64\Debug\SetUpSDL2.exe
 E:\CODING\MyGame\SpaceShooter\x64\Debug\SpaceShooter.exe

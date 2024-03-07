@@ -1,3 +1,17 @@
-﻿  LINK : E:\CODING\MyGame\SpaceShooter\x64\Debug\SpaceShooter.exe not found or not built by the last incremental link; performing full link
+﻿  Effect.cpp
+  Enemy.cpp
+  Entity.cpp
+  Game.cpp
+E:\CODING\MyGame\SpaceShooter\Entity.cpp(4,13): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+E:\CODING\MyGame\SpaceShooter\Entity.cpp(9,13): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
+E:\CODING\MyGame\SpaceShooter\Entity.cpp(10,13): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
+E:\CODING\MyGame\SpaceShooter\Game.cpp(124,14): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+E:\CODING\MyGame\SpaceShooter\Game.cpp(125,14): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+  main.cpp
+  Game.hpp
+  Player.cpp
+E:\CODING\MyGame\SpaceShooter\Player.cpp(33,14): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+E:\CODING\MyGame\SpaceShooter\Player.cpp(34,14): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+  Generating Code...
 x64\Debug\Game.obj : warning LNK4042: object specified more than once; extras ignored
   SpaceShooter.vcxproj -> E:\CODING\MyGame\SpaceShooter\x64\Debug\SpaceShooter.exe

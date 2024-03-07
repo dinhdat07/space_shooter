@@ -14,7 +14,7 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="Resource Files\gfx">
-      <UniqueIdentifier>{6f5b4fdc-3c7d-4956-b30e-7c3554ccd3c5}</UniqueIdentifier>
+      <UniqueIdentifier>{08bebab7-ab42-4e66-897c-9c930f6df8dd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -36,6 +36,9 @@
     <ClCompile Include="Enemy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Effect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Entity.hpp">
@@ -50,6 +53,9 @@
     <ClInclude Include="Enemy.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="Effect.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="gfx\alienBullet.png">
@@ -59,6 +65,9 @@
       <Filter>Resource Files\gfx</Filter>
     </Image>
     <Image Include="gfx\enemy.png">
+      <Filter>Resource Files\gfx</Filter>
+    </Image>
+    <Image Include="gfx\enemyR.png">
       <Filter>Resource Files\gfx</Filter>
     </Image>
     <Image Include="gfx\explosion.png">
@@ -73,6 +82,9 @@
     <Image Include="gfx\playerBullet.png">
       <Filter>Resource Files\gfx</Filter>
     </Image>
+    <Image Include="gfx\playerR.png">
+      <Filter>Resource Files\gfx</Filter>
+    </Image>
     <Image Include="gfx\points.png">
       <Filter>Resource Files\gfx</Filter>
     </Image>
@@ -80,6 +92,9 @@
       <Filter>Resource Files\gfx</Filter>
     </Image>
     <Image Include="gfx\shooter.png">
+      <Filter>Resource Files\gfx</Filter>
+    </Image>
+    <Image Include="gfx\spaceBackgroundR.png">
       <Filter>Resource Files\gfx</Filter>
     </Image>
   </ItemGroup>

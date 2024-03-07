@@ -15,11 +15,11 @@
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
 
-const int PLAYER_SPEED = 4;
-const int PLAYER_BULLET_SPEED = 16;
+const int PLAYER_SPEED = 8;
+const int PLAYER_BULLET_SPEED = 24;
 
-const int ENEMY_SPEED = -4;
-const int ENEMY_BULLET_SPEED = 8;
+const int ENEMY_SPEED = -8;
+const int ENEMY_BULLET_SPEED = 12;
 
 const int MAX_KEYBOARD_KEYS = 350;
 

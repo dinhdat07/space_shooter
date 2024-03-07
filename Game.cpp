@@ -6,7 +6,7 @@ void Game::start() {
 	initPlayer();
 	while (true) {
 		prepareScene();
-		//drawBackground();
+		drawBackground();
 		getInput();
 		presentEntities();
 		presentScene();
@@ -35,6 +35,8 @@ void Game::initGame() {
 		cout << "Could not initialize SDL Image : " << SDL_GetError() << endl;
 		exit(-1);
 	}
+
+	backgroundX = 0;
 
 	enemySpawnTimer = 60;
 
@@ -74,6 +76,9 @@ void Game::presentEntities() {
 		player.move();
 		draw(player.getTexture(), player.getX(), player.getY());
 	}
+	else {
+		addExplosion(player.getX(), player.getY());
+	}
 
 	int wP, hP;
 	if (player.Fire() == true && player.getReload() == 0) {
@@ -104,10 +109,13 @@ void Game::presentEntities() {
 	for (auto i = Enemies.begin(); i != Enemies.end(); ) {
 		int w, h;
 		SDL_QueryTexture((*i)->getTexture(), NULL, NULL, &w, &h);
-		if ((*i)->getX() <= -w || !(*i)->getHealth()) {
+		if ((*i)->getX() <= -w ){
 			i = Enemies.erase(i);
 		}
-		else {
+		else if (!(*i)->getHealth()) {
+			addExplosion((*i)->getX(), (*i)->getY());
+			i = Enemies.erase(i);
+		} else {
 			if ((*i)->getReload() > 0) (*i)->setReload((*i)->getReload() - 1);
 			else {
 				enemyBullet.setTexture(loadTexture("gfx/alienBullet.png"));
@@ -129,6 +137,7 @@ void Game::presentEntities() {
 			draw((*i)->getTexture(), (*i)->getX(), (*i)->getY());
 			i++;
 		}
+
 	}
 
 	//Checking removable bullets
@@ -162,11 +171,63 @@ void Game::presentEntities() {
 			}
 		}
 	}
+
+	//Draw explosion effect
+	for (auto i = Explosion.begin(); i != Explosion.end(); ) {
+		bool remove = false;
+		for (auto j = i->begin(); j != i->end(); j++) {
+			if (j->getA() <= 0) {
+				remove = true;
+				break;
+			}
+			SDL_SetRenderDrawBlendMode(app.renderer, SDL_BLENDMODE_ADD);
+			SDL_SetTextureBlendMode(j->getTexture(), SDL_BLENDMODE_ADD);
+
+			SDL_SetTextureColorMod(j->getTexture(), j->getR(), j->getG(), j->getB());
+			SDL_SetTextureAlphaMod(j->getTexture(), j->getA());
+
+			draw(j->getTexture(), j->getX(), j->getY());
+			j->updateA(-15);
+		}
+
+		if (remove) {
+			i = Explosion.erase(i);
+		}
+		else {
+			i++;
+		}
+	}
 }
 
 void Game::prepareScene() {
 	SDL_SetRenderDrawColor(app.renderer, 0, 0, 0, 255);
 	SDL_RenderClear(app.renderer);
+}
+
+void Game::addExplosion(int x, int y) {
+	explosion.setTexture(loadTexture("gfx/explosion.png"));
+	explosion.setX(x + rand() % 32);
+	explosion.setY(y + rand() % 32);
+	explosion.setDX(0); explosion.setDY(0);
+	std::vector<Effect> tmp;
+	for (int j = 0; j < 10; j++) {
+		switch (rand() % 4) {
+		case 0:
+			explosion.setRGBA(255, 255, 0, 200); //YELLOW
+			break;
+		case 1:
+			explosion.setRGBA(255, 0, 0, 200); //RED
+			break;
+		case 2:
+			explosion.setRGBA(255, 128, 0, 200); //ORANGE
+			break;
+		case 3:
+			explosion.setRGBA(255, 255, 255, 200); //WHITE
+			break;
+		}
+		tmp.push_back(explosion);
+	}
+	Explosion.push_back(tmp);
 }
 
 void Game::presentScene() {
@@ -195,6 +256,28 @@ void Game::draw(SDL_Texture* texture, int x, int y) {
 	target.y = y;
 	SDL_QueryTexture(texture, NULL, NULL, &target.w, &target.h);
 	SDL_RenderCopy(app.renderer, texture, NULL, &target);
+}
+
+void Game::drawRect(SDL_Texture* texture, SDL_Rect* src, int x, int y) {
+	SDL_Rect dest;
+	dest.x = x;
+	dest.y = y;
+	dest.w = src->w;
+	dest.h = src->h;
+
+	SDL_RenderCopy(app.renderer, texture, src, &dest);
+}
+
+void Game::drawBackground() {
+	int w, h;
+	app.background = loadTexture("gfx/background.png");
+	SDL_QueryTexture(app.background, NULL, NULL, &w, &h);
+	if (-w > --backgroundX) {
+		backgroundX = 0;
+	}
+
+	draw(app.background, backgroundX, 0);
+	draw(app.background, backgroundX + w, 0);
 }
 
 bool Game::detectCollision(int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2) {
