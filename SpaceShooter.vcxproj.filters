@@ -16,6 +16,12 @@
     <Filter Include="Resource Files\gfx">
       <UniqueIdentifier>{08bebab7-ab42-4e66-897c-9c930f6df8dd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\sound">
+      <UniqueIdentifier>{7b8ccd8e-2215-4fe2-834e-5d7c061b3e62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\music">
+      <UniqueIdentifier>{793b8beb-7b48-4159-9833-e9aeb4284028}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -97,5 +103,25 @@
     <Image Include="gfx\spaceBackgroundR.png">
       <Filter>Resource Files\gfx</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="sound\10 Guage Shotgun-SoundBible.com-74120584.ogg">
+      <Filter>Resource Files\sound</Filter>
+    </None>
+    <None Include="sound\bulletSound.ogg">
+      <Filter>Resource Files\sound</Filter>
+    </None>
+    <None Include="sound\earnPowerUp.ogg">
+      <Filter>Resource Files\sound</Filter>
+    </None>
+    <None Include="sound\enemyBulletSound.ogg">
+      <Filter>Resource Files\sound</Filter>
+    </None>
+    <None Include="sound\explosionSound.ogg">
+      <Filter>Resource Files\sound</Filter>
+    </None>
+    <None Include="music\backgroundMusic.ogg">
+      <Filter>Resource Files\music</Filter>
+    </None>
   </ItemGroup>
 </Project>

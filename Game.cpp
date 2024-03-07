@@ -16,10 +16,11 @@ void Game::start() {
 
 
 void Game::initGame() {
-	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
 		cout << "Could not initialize SDL: " << SDL_GetError() << endl;
 		exit(-1);
 	}
+
 	app.window = SDL_CreateWindow("Space Shooter", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 	if (!app.window) {
 		cout << "Could not create window : " << SDL_GetError() << endl;
@@ -31,10 +32,17 @@ void Game::initGame() {
 		cout << "Could not create renderer : " << SDL_GetError() << endl;
 		exit(-1);
 	}
-	if (!(IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG))) {
+
+	if (!IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG)) {
 		cout << "Could not initialize SDL Image : " << SDL_GetError() << endl;
 		exit(-1);
 	}
+
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+		cout << "Could not initialize SDL Mixer : " << SDL_GetError() << endl;
+		exit(-1);
+	}
+	Mix_AllocateChannels(8);
 
 	backgroundX = 0;
 
@@ -45,6 +53,12 @@ void Game::initGame() {
 	playerBullet.setHealth(1);
 	playerBullet.setTexture(loadTexture("gfx/playerBullet.png"));
 
+	music = Mix_LoadMUS("music/backgroundMusic.ogg");
+	explosionSound = Mix_LoadWAV("sound/explosionSound.ogg");
+	buttonSound = Mix_LoadWAV("sound/buttonSound.ogg");
+	bulletSound = Mix_LoadWAV("sound/bulletSound.ogg");
+
+	Mix_PlayMusic(music, -1);
 }
 
 void Game::initPlayer() {
@@ -78,19 +92,21 @@ void Game::presentEntities() {
 	}
 	else {
 		addExplosion(player.getX(), player.getY());
+		Mix_PlayChannel(-1, explosionSound, 0);
 	}
 
 	int wP, hP;
 	if (player.Fire() == true && player.getReload() == 0) {
-		playerBullet.setTexture(loadTexture("gfx/playerBullet.png"));
+		//playerBullet.setTexture(loadTexture("gfx/playerBullet.png"));
 		SDL_QueryTexture(player.getTexture(), NULL, NULL, &wP, &hP);
 		playerBullet.setX(player.getX() + wP/2);
 		playerBullet.setY(player.getY() + hP/2);
-		playerBullet.setDX(PLAYER_BULLET_SPEED);
-		playerBullet.setHealth(1);
+		//playerBullet.setDX(PLAYER_BULLET_SPEED);
+		//playerBullet.setHealth(1);
 		playerBullet.setSide(1);
 		player.setReload(5);
 		Bullets.push_back(playerBullet);
+		Mix_PlayChannel(-1, bulletSound, 0);
 	}
 
 	//Spawn enemy
@@ -114,6 +130,7 @@ void Game::presentEntities() {
 		}
 		else if (!(*i)->getHealth()) {
 			addExplosion((*i)->getX(), (*i)->getY());
+			Mix_PlayChannel(-1, explosionSound, 0);
 			i = Enemies.erase(i);
 		} else {
 			if ((*i)->getReload() > 0) (*i)->setReload((*i)->getReload() - 1);

@@ -29,7 +29,12 @@ private:
 	Effect explosion;
 	std::vector <std::vector<Effect>> Explosion;
 
-	//int score, highScore;
+	//sound and music
+	Mix_Chunk* explosionSound = NULL;
+	Mix_Chunk* bulletSound = NULL;
+	Mix_Chunk* buttonSound =  NULL;
+	Mix_Music* music = NULL;
+
 	void initGame();
 	void initPlayer();
 	void presentEntities();

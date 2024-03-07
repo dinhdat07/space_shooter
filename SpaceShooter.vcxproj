@@ -160,6 +160,14 @@
     <Image Include="gfx\shooter.png" />
     <Image Include="gfx\spaceBackgroundR.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="music\backgroundMusic.ogg" />
+    <None Include="sound\10 Guage Shotgun-SoundBible.com-74120584.ogg" />
+    <None Include="sound\bulletSound.ogg" />
+    <None Include="sound\earnPowerUp.ogg" />
+    <None Include="sound\enemyBulletSound.ogg" />
+    <None Include="sound\explosionSound.ogg" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
