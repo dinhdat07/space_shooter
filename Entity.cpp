@@ -34,8 +34,8 @@ void Entity::setTexture(SDL_Texture* texture) {
 	this->texture = texture;
 }
 
-void Entity::setSide(int side) {
-	this->side = side;
+void Entity::setType(int type) {
+	this->type = type;
 }
 
 
@@ -63,8 +63,8 @@ int Entity::getHealth() {
 	return health;
 }
 
-int Entity::Side() {
-	return side;
+int Entity::Type() {
+	return type;
 }
 
 Entity::~Entity() {

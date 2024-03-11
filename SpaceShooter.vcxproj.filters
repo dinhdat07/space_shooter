@@ -22,6 +22,9 @@
     <Filter Include="Resource Files\music">
       <UniqueIdentifier>{793b8beb-7b48-4159-9833-e9aeb4284028}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\font">
+      <UniqueIdentifier>{287d9385-f708-44a5-9545-77c402c9bcf3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -123,5 +126,10 @@
     <None Include="music\backgroundMusic.ogg">
       <Filter>Resource Files\music</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="font\Ghost.ttf">
+      <Filter>Resource Files\font</Filter>
+    </Font>
   </ItemGroup>
 </Project>

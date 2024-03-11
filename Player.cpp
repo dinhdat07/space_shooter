@@ -2,7 +2,7 @@
 #include "Player.hpp"
 
 Player::Player() {
-	up = left = down = right = fire = reload = 0;
+	up = left = down = right = fire = reload = enhance = 0;
 }
 
 void Player::move() {
@@ -45,6 +45,14 @@ int Player::getReload() {
 
 void Player::setReload(int reload) {
 	this->reload = reload;
+}
+
+int Player::getEnhance() {
+	return reload;
+}
+
+void Player::setEnhance(int enhance) {
+	this->enhance = enhance;
 }
 
 void Player::keyDown(SDL_KeyboardEvent* event) {
@@ -93,7 +101,7 @@ void Player::keyUp(SDL_KeyboardEvent* event) {
 
 
 void Player::resetInput() {
-	left = up = right = down = fire = false;
+	left = up = right = down = fire =  enhance = false;
 }
 
 

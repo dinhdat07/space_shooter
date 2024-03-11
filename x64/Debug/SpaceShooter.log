@@ -1,9 +1,6 @@
 ﻿  Game.cpp
-E:\CODING\MyGame\SpaceShooter\Game.cpp(141,14): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-E:\CODING\MyGame\SpaceShooter\Game.cpp(142,14): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+E:\CODING\MyGame\SpaceShooter\Game.cpp(195,14): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+E:\CODING\MyGame\SpaceShooter\Game.cpp(196,14): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
   Game.hpp
-  Player.cpp
-E:\CODING\MyGame\SpaceShooter\Player.cpp(33,14): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-E:\CODING\MyGame\SpaceShooter\Player.cpp(34,14): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
   Generating Code...
   SpaceShooter.vcxproj -> E:\CODING\MyGame\SpaceShooter\x64\Debug\SpaceShooter.exe

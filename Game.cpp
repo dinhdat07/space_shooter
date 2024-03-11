@@ -3,16 +3,60 @@ using namespace std;
 
 void Game::start() {
 	initGame();
-	initPlayer();
+	titleScreen();
 	while (true) {
 		prepareScene();
 		drawBackground();
 		getInput();
 		presentEntities();
+		HUD();
 		presentScene();
 	}
 }
 
+void Game::titleScreen() {
+	SDL_Event e;
+	while (true) {
+		drawBackground();
+		string title1 = "Space ", title2 = "Shooter";
+		string instruct = "Press Space to protect the galaxy!";
+		SDL_Surface* titleSpace = TTF_RenderText_Solid(titleFont, title1.c_str(), { 255, 255, 255, 0 });
+		SDL_Texture* tSTXT = SDL_CreateTextureFromSurface(app.renderer, titleSpace);
+		SDL_Surface* titleShooter = TTF_RenderText_Solid(titleFont, title2.c_str(), { 255, 255, 255, 0 });
+		SDL_Texture* tShTXT = SDL_CreateTextureFromSurface(app.renderer, titleShooter);
+		SDL_Surface* pressSf = TTF_RenderText_Solid(font, instruct.c_str(), { 255, 255, 255, 0 });
+		SDL_Texture* pressTXT = SDL_CreateTextureFromSurface(app.renderer, pressSf);
+		draw(tSTXT, SCREEN_WIDTH/4, 200);
+		draw(tShTXT, SCREEN_WIDTH/4 + 100, 300);
+		draw(pressTXT, SCREEN_WIDTH / 4 + 75, 400);
+		presentScene();
+
+		while (SDL_PollEvent(&e)) {
+			switch (e.type) {
+			case SDL_QUIT:
+				exit(0);
+				break;
+			case SDL_KEYDOWN:
+				if (e.key.keysym.scancode == SDL_SCANCODE_SPACE) {
+					initPlayer();
+					return;
+				}
+				if (e.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
+					exit(0);
+				}
+				if (e.key.keysym.scancode == SDL_SCANCODE_1) {
+					if (Mix_PausedMusic()) {
+						Mix_ResumeMusic();
+					}
+					else {
+						Mix_PauseMusic();
+					}
+				}
+				break;
+			}
+		}
+	}
+}
 
 
 void Game::initGame() {
@@ -42,6 +86,12 @@ void Game::initGame() {
 		cout << "Could not initialize SDL Mixer : " << SDL_GetError() << endl;
 		exit(-1);
 	}
+
+	if (TTF_Init() == -1) {
+		cout << "Could not initialize SDL TTF : " << SDL_GetError() << endl;
+		exit(-1);
+	}
+
 	Mix_AllocateChannels(8);
 
 	backgroundX = 0;
@@ -57,14 +107,19 @@ void Game::initGame() {
 	explosionSound = Mix_LoadWAV("sound/explosionSound.ogg");
 	buttonSound = Mix_LoadWAV("sound/buttonSound.ogg");
 	bulletSound = Mix_LoadWAV("sound/bulletSound.ogg");
-
 	Mix_PlayMusic(music, -1);
+
+	font = TTF_OpenFont("font/Goldeneye.ttf", 28);
+	titleFont = TTF_OpenFont("font/Ghost.ttf", 90);
+	score = 0;
+	highScore = 0;
 }
 
 void Game::initPlayer() {
 	player.setX(SCREEN_WIDTH / 2);
 	player.setY(SCREEN_HEIGHT / 2 - 50);
-	player.setHealth(1);
+	player.setHealth(10);
+	player.setEnhance(0);
 	player.resetInput();
 }
 
@@ -97,15 +152,21 @@ void Game::presentEntities() {
 
 	int wP, hP;
 	if (player.Fire() == true && player.getReload() == 0) {
-		//playerBullet.setTexture(loadTexture("gfx/playerBullet.png"));
 		SDL_QueryTexture(player.getTexture(), NULL, NULL, &wP, &hP);
 		playerBullet.setX(player.getX() + wP/2);
 		playerBullet.setY(player.getY() + hP/2);
-		//playerBullet.setDX(PLAYER_BULLET_SPEED);
-		//playerBullet.setHealth(1);
-		playerBullet.setSide(1);
+		playerBullet.setType(1);
 		player.setReload(5);
 		Bullets.push_back(playerBullet);
+		if (player.getEnhance() > 0) {
+			playerBullet.setX(player.getX());
+			playerBullet.setY(player.getY());
+			Bullets.push_back(playerBullet);
+
+			playerBullet.setX(player.getX());
+			playerBullet.setY(player.getY() + hP);
+			Bullets.push_back(playerBullet);
+		}
 		Mix_PlayChannel(-1, bulletSound, 0);
 	}
 
@@ -130,6 +191,7 @@ void Game::presentEntities() {
 		}
 		else if (!(*i)->getHealth()) {
 			addExplosion((*i)->getX(), (*i)->getY());
+			score++;
 			Mix_PlayChannel(-1, explosionSound, 0);
 			i = Enemies.erase(i);
 		} else {
@@ -146,7 +208,7 @@ void Game::presentEntities() {
 				enemyBullet.setDX(dx * ENEMY_BULLET_SPEED);
 				enemyBullet.setDY(dy * ENEMY_BULLET_SPEED);
 				enemyBullet.setHealth(1);
-				enemyBullet.setSide(0);
+				enemyBullet.setType(0);
 				(*i)->setReload(60);
 				Bullets.push_back(enemyBullet);
 			}
@@ -174,17 +236,24 @@ void Game::presentEntities() {
 		int wB, hB, wP, hP;
 		SDL_QueryTexture(i->getTexture(), NULL, NULL, &wB, &hB);
 		SDL_QueryTexture(player.getTexture(), NULL, NULL, &wP, &hP);
-		if (!i->Side() && detectCollision(i->getX(), i->getY(), wB, hB, player.getX(), player.getY(), wP, hP)) {
+		if (!i->Type() && detectCollision(i->getX(), i->getY(), wB, hB, player.getX(), player.getY(), wP, hP)) {
 			i->setHealth(0);
-			player.setHealth(0);
+			player.setHealth(player.getHealth() - 2);
 		}
 		for (auto j = Enemies.begin(); j != Enemies.end(); j++) {
 			int wE, hE, wP, hP;
 			SDL_QueryTexture((*j)->getTexture(), NULL, NULL, &wE, &hE);
 			SDL_QueryTexture(player.getTexture(), NULL, NULL, &wP, &hP);
-			if (i->Side() && detectCollision(i->getX(), i->getY(), wB, hB, (*j)->getX(), (*j)->getY(), wE, hE)) {
+			if (i->Type() && detectCollision(i->getX(), i->getY(), wB, hB, (*j)->getX(), (*j)->getY(), wE, hE)) {
 				i->setHealth(0);
 				(*j)->setHealth(0);
+				int num = rand() % 100 + 1;
+				if (num < 30) {
+					addPowerUp((*j)->getX(), (*j)->getY(), 1);
+				}
+				else if (num < 50) {
+					addPowerUp((*j)->getX(), (*j)->getY(), 2);
+				}
 			}
 		}
 	}
@@ -214,6 +283,46 @@ void Game::presentEntities() {
 			i++;
 		}
 	}
+
+	//do power ups
+	for (auto i = powerUps.begin(); i != powerUps.end(); ) {
+		if (i->getHealth() == 0 || i->getX() < 0 || i->getY() < 0 || i->getY() > 680) {
+			i = powerUps.erase(i);
+			break;
+		} else {
+			int wPU, hPU, wP, hP;
+			SDL_QueryTexture(i->getTexture(), NULL, NULL, &wPU, &hPU);
+			SDL_QueryTexture(player.getTexture(), NULL, NULL, &wP, &hP);
+			if (detectCollision(i->getX(), i->getY(), wPU, hPU, player.getX(), player.getY(), wP, hP)) {
+				if (i->Type() == 1) {
+					player.setHealth(player.getHealth() + 5);
+				}
+				else {
+					player.setEnhance(3000);
+				}
+				i = powerUps.erase(i);
+				break;
+			}
+
+			i->move();
+			draw(i->getTexture(), i->getX(), i->getY());
+			i->setHealth(i->getHealth() - 1);
+			i++;
+		}
+	}
+
+}
+
+void Game::HUD() {
+	highScore = max(highScore, score);
+	scoreText << "Score : " << score;
+	hScoreText << "High Score : " << highScore;
+	SDL_Surface* scoreSurface = TTF_RenderText_Solid(font, scoreText.str().c_str(), { 255, 255, 255, 0 });
+	SDL_Texture* scoreTXT = SDL_CreateTextureFromSurface(app.renderer, scoreSurface);
+	SDL_Surface* hsSurface = TTF_RenderText_Solid(font, hScoreText.str().c_str(), { 255, 255, 255, 0 });
+	SDL_Texture* hsTXT = SDL_CreateTextureFromSurface(app.renderer, hsSurface);
+	draw(scoreTXT, 20, 20);
+	draw(hsTXT, 20, 60);
 }
 
 void Game::prepareScene() {
@@ -247,6 +356,19 @@ void Game::addExplosion(int x, int y) {
 	Explosion.push_back(tmp);
 }
 
+void Game::addPowerUp(int x, int y, int type) {
+	if(type == 1) powerup.setTexture(loadTexture("gfx/bonusHP.png"));
+	else if(type == 2) powerup.setTexture(loadTexture("gfx/enchanceATK.png"));
+	powerup.setX(x + 20);
+	powerup.setY(y + 20);
+	powerup.setDX( -rand() % 5  - 1);
+	powerup.setDY(rand() % 5 + 1);
+	powerup.setHealth(3000);
+	powerup.setType(type);
+	powerUps.push_back(powerup);
+}
+
+
 void Game::presentScene() {
 	if (enemySpawnTimer > 0) {
 		enemySpawnTimer--;
@@ -254,6 +376,12 @@ void Game::presentScene() {
 	if (player.getReload() > 0) {
 		player.setReload(player.getReload() - 1);
 	}
+
+	if (player.getEnhance() > 0) {
+		player.setEnhance(player.getEnhance() - 1);
+	}
+	scoreText.str(std::string());
+	hScoreText.str(std::string());
 	SDL_RenderPresent(app.renderer);
 	SDL_Delay(16);
 }
@@ -266,6 +394,7 @@ SDL_Texture* Game::loadTexture(std::string path) {
 	}
 	return texture;
 }
+
 
 void Game::draw(SDL_Texture* texture, int x, int y) {
 	SDL_Rect target;
@@ -292,7 +421,6 @@ void Game::drawBackground() {
 	if (-w > --backgroundX) {
 		backgroundX = 0;
 	}
-
 	draw(app.background, backgroundX, 0);
 	draw(app.background, backgroundX + w, 0);
 }

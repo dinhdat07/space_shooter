@@ -168,6 +168,9 @@
     <None Include="sound\enemyBulletSound.ogg" />
     <None Include="sound\explosionSound.ogg" />
   </ItemGroup>
+  <ItemGroup>
+    <Font Include="font\Ghost.ttf" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

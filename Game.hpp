@@ -29,21 +29,35 @@ private:
 	Effect explosion;
 	std::vector <std::vector<Effect>> Explosion;
 
+	std::vector<Entity> powerUps;
+	Entity powerup;
+
 	//sound and music
 	Mix_Chunk* explosionSound = NULL;
 	Mix_Chunk* bulletSound = NULL;
 	Mix_Chunk* buttonSound =  NULL;
 	Mix_Music* music = NULL;
 
+	//font
+	TTF_Font* font = NULL;
+	TTF_Font* titleFont = NULL;
+
+	int score, highScore;
+	std::stringstream scoreText, hScoreText;
+
+
 	void initGame();
+	void titleScreen();
 	void initPlayer();
 	void presentEntities();
 	void getInput();
+	void HUD();
 	void presentScene();
 	void draw(SDL_Texture*, int, int);
 	void drawRect(SDL_Texture*, SDL_Rect*, int, int);
 	void drawBackground();
 	void addExplosion(int, int);
+	void addPowerUp(int, int, int);
 	SDL_Texture* loadTexture(std::string);
 	bool detectCollision(int, int, int, int, int, int, int, int);
 public:
