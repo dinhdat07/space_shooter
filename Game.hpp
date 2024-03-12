@@ -12,6 +12,7 @@ private:
 		SDL_Renderer* renderer;
 		SDL_Window* window;
 		SDL_Texture* background;
+		bool playing;
 	} app;
 
 	Player player;
@@ -42,8 +43,9 @@ private:
 	TTF_Font* font = NULL;
 	TTF_Font* titleFont = NULL;
 
+	int gameCount;
 	int score, highScore;
-	std::stringstream scoreText, hScoreText;
+	std::stringstream scoreText, hScoreText, LPText;
 
 
 	void initGame();
@@ -56,10 +58,11 @@ private:
 	void draw(SDL_Texture*, int, int);
 	void drawRect(SDL_Texture*, SDL_Rect*, int, int);
 	void drawBackground();
-	void addExplosion(int, int);
+	void addExplosion(int, int, int);
 	void addPowerUp(int, int, int);
 	SDL_Texture* loadTexture(std::string);
 	bool detectCollision(int, int, int, int, int, int, int, int);
+	void endScreen();
 public:
 	void start();
 };

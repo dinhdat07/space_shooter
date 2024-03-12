@@ -48,7 +48,7 @@ void Player::setReload(int reload) {
 }
 
 int Player::getEnhance() {
-	return reload;
+	return enhance;
 }
 
 void Player::setEnhance(int enhance) {
