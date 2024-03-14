@@ -20,7 +20,9 @@ private:
 	std::vector <Entity> Bullets;
 
 	Enemy* enemy;
+	SDL_Texture* enemyTexture;
 	Entity enemyBullet;
+	SDL_Texture* enemyBulletTexture;
 	int enemySpawnTimer;
 	std::vector <Enemy*> Enemies;
 
@@ -29,21 +31,23 @@ private:
 
 	Effect explosion;
 	std::vector <std::vector<Effect>> Explosion;
+	SDL_Texture* explosionTexture;
 
 	std::vector<Entity> powerUps;
 	Entity powerup;
 
 	//sound and music
 	Mix_Chunk* explosionSound = NULL;
+	Mix_Chunk* playerExplosionSound = NULL;
 	Mix_Chunk* bulletSound = NULL;
 	Mix_Chunk* buttonSound =  NULL;
+	Mix_Chunk* powerupSound = NULL;
 	Mix_Music* music = NULL;
 
 	//font
 	TTF_Font* font = NULL;
 	TTF_Font* titleFont = NULL;
 
-	int gameCount;
 	int score, highScore;
 	std::stringstream scoreText, hScoreText, LPText;
 

@@ -21,19 +21,18 @@ void Game::start() {
 
 void Game::titleScreen() {
 	SDL_Event e;
+	string title1 = "Space ", title2 = "Shooter";
+	string instruct = "Press Space to protect the galaxy!";
+	SDL_Surface* titleSpace = TTF_RenderText_Solid(titleFont, title1.c_str(), { 255, 255, 255, 0 });
+	SDL_Texture* tSTXT = SDL_CreateTextureFromSurface(app.renderer, titleSpace);
+
+	SDL_Surface* titleShooter = TTF_RenderText_Solid(titleFont, title2.c_str(), { 255, 255, 255, 0 });
+	SDL_Texture* tShTXT = SDL_CreateTextureFromSurface(app.renderer, titleShooter);
+
+	SDL_Surface* pressSf = TTF_RenderText_Solid(font, instruct.c_str(), { 255, 255, 255, 0 });
+	SDL_Texture* pressTXT = SDL_CreateTextureFromSurface(app.renderer, pressSf);
 	while (true) {
 		drawBackground();
-		string title1 = "Space ", title2 = "Shooter";
-		string instruct = "Press Space to protect the galaxy!";
-		SDL_Surface* titleSpace = TTF_RenderText_Solid(titleFont, title1.c_str(), { 255, 255, 255, 0 });
-		SDL_Texture* tSTXT = SDL_CreateTextureFromSurface(app.renderer, titleSpace);
-
-		SDL_Surface* titleShooter = TTF_RenderText_Solid(titleFont, title2.c_str(), { 255, 255, 255, 0 });
-		SDL_Texture* tShTXT = SDL_CreateTextureFromSurface(app.renderer, titleShooter);
-
-		SDL_Surface* pressSf = TTF_RenderText_Solid(font, instruct.c_str(), { 255, 255, 255, 0 });
-		SDL_Texture* pressTXT = SDL_CreateTextureFromSurface(app.renderer, pressSf);
-
 		draw(tSTXT, SCREEN_WIDTH/4, 200);
 		draw(tShTXT, SCREEN_WIDTH/4 + 100, 300);
 		draw(pressTXT, SCREEN_WIDTH / 4 + 75, 400);
@@ -69,21 +68,20 @@ void Game::titleScreen() {
 
 void Game::endScreen() {
 	SDL_Event e;
+	string gameover = "GAME OVER";
+	string endScore = "Your score: " + to_string(score);
+	string instruct = "Want to start over? Press Space";
+
+	SDL_Surface* endSf = TTF_RenderText_Solid(titleFont, gameover.c_str(), { 255, 255, 255, 0 });
+	SDL_Texture* endTXT = SDL_CreateTextureFromSurface(app.renderer, endSf);
+
+	SDL_Surface* scoreSf = TTF_RenderText_Solid(font, endScore.c_str(), { 255, 255, 255, 0 });
+	SDL_Texture* scoreTXT = SDL_CreateTextureFromSurface(app.renderer, scoreSf);
+
+	SDL_Surface* instructSf = TTF_RenderText_Solid(font, instruct.c_str(), { 255, 255, 255, 0 });
+	SDL_Texture* instructTXT = SDL_CreateTextureFromSurface(app.renderer, instructSf);
 	while (true) {
 		drawBackground();
-		string gameover = "GAME OVER";
-		string endScore = "Your score: " + to_string(score);
-		string instruct = "Want to start over? Press Space";
-
-		SDL_Surface* endSf = TTF_RenderText_Solid(titleFont, gameover.c_str(), { 255, 255, 255, 0 });
-		SDL_Texture* endTXT = SDL_CreateTextureFromSurface(app.renderer, endSf);
-
-		SDL_Surface* scoreSf = TTF_RenderText_Solid(font, endScore.c_str(), { 255, 255, 255, 0 });
-		SDL_Texture* scoreTXT = SDL_CreateTextureFromSurface(app.renderer, scoreSf);
-
-		SDL_Surface* instructSf = TTF_RenderText_Solid(font, instruct.c_str(), { 255, 255, 255, 0 });
-		SDL_Texture* instructTXT = SDL_CreateTextureFromSurface(app.renderer, instructSf);
-
 		draw(endTXT, SCREEN_WIDTH / 4, 200);
 		draw(scoreTXT, SCREEN_WIDTH / 4 + 225, 350);
 		draw(instructTXT, SCREEN_WIDTH / 4 + 100, 400);
@@ -96,6 +94,8 @@ void Game::endScreen() {
 				break;
 			case SDL_KEYDOWN:
 				if (e.key.keysym.scancode == SDL_SCANCODE_SPACE) {
+					enemySpawnTimer = 60;
+					score = 0;
 					app.playing = true;
 					initPlayer();
 					return;
@@ -154,24 +154,30 @@ void Game::initGame() {
 	Mix_AllocateChannels(8);
 
 	backgroundX = 0;
-	enemySpawnTimer = 60;
-	app.playing = false;
 
+	app.playing = false;
+	app.background = loadTexture("gfx/background.png");
 
 	player.setTexture(loadTexture("gfx/player.png"));
 	playerBullet.setDX(PLAYER_BULLET_SPEED);
 	playerBullet.setHealth(1);
 	playerBullet.setTexture(loadTexture("gfx/playerBullet.png"));
+	enemyBulletTexture = loadTexture("gfx/alienBullet.png");
+	enemyTexture = loadTexture("gfx/enemy.png");
 
 	music = Mix_LoadMUS("music/backgroundMusic.ogg");
 	explosionSound = Mix_LoadWAV("sound/enemyExplosion.ogg");
+	playerExplosionSound = Mix_LoadWAV("sound/explosionSound.ogg");
 	buttonSound = Mix_LoadWAV("sound/buttonSound.ogg");
 	bulletSound = Mix_LoadWAV("sound/bulletSound.ogg");
-	Mix_PlayMusic(music, -1);
+	powerupSound = Mix_LoadWAV("sound/earnPowerUp.ogg");
 
-	gameCount = 1;
+	explosionTexture = loadTexture("gfx/explosion.png");
 	font = TTF_OpenFont("font/Goldeneye.ttf", 28);
 	titleFont = TTF_OpenFont("font/Ghost.ttf", 90);
+	Mix_PlayMusic(music, -1);
+
+	enemySpawnTimer = 60;
 	score = 0;
 	highScore = 0;
 }
@@ -215,7 +221,6 @@ void Game::presentEntities() {
 		playerBullet.setType(1);
 		player.setReload(5);
 		Bullets.push_back(playerBullet);
-		std::cout << player.getEnhance() << endl;
 		if (player.getEnhance() > 0) {
 			playerBullet.setX(player.getX());
 			playerBullet.setY(player.getY());
@@ -231,9 +236,9 @@ void Game::presentEntities() {
 	//Spawn enemy
 	if (enemySpawnTimer == 0) {
 		enemy = new Enemy();
+		enemy->setTexture(enemyTexture);
 		enemy->setX(SCREEN_WIDTH - 80);
 		enemy->setDX(ENEMY_SPEED);
-		enemy->setTexture(loadTexture("gfx/enemy.png"));
 		enemy->setHealth(1);
 		enemySpawnTimer = 60;
 		enemy->setY(rand() % 400 + 100);
@@ -255,7 +260,7 @@ void Game::presentEntities() {
 		} else {
 			if ((*i)->getReload() > 0) (*i)->setReload((*i)->getReload() - 1);
 			else {
-				enemyBullet.setTexture(loadTexture("gfx/alienBullet.png"));
+				enemyBullet.setTexture(enemyBulletTexture);
 				enemyBullet.setX((*i)->getX() - w/2);
 				enemyBullet.setY((*i)->getY() + h/2);
 				float dx = player.getX() - enemyBullet.getX();
@@ -299,9 +304,7 @@ void Game::presentEntities() {
 			player.setHealth(player.getHealth() - 2);
 			if (player.getHealth() <= 0) {
 				addExplosion(player.getX(), player.getY(), 1);
-				explosionSound = Mix_LoadWAV("sound/explosion.ogg");
-				Mix_PlayChannel(-1, explosionSound, 0);
-				gameCount = 0;
+				Mix_PlayChannel(-1, playerExplosionSound, 0);
 			}
 		}
 		for (auto j = Enemies.begin(); j != Enemies.end(); j++) {
@@ -364,6 +367,7 @@ void Game::presentEntities() {
 				} else {
 					player.setEnhance(300);
 				}
+				Mix_PlayChannel(-1, powerupSound, 0);
 				i = powerUps.erase(i);
 				break;
 			}
@@ -403,7 +407,7 @@ void Game::prepareScene() {
 }
 
 void Game::addExplosion(int x, int y, int type) {
-	explosion.setTexture(loadTexture("gfx/explosion.png"));
+	explosion.setTexture(explosionTexture);
 	explosion.setX(x + rand() % 32);
 	explosion.setY(y + rand() % 32);
 	explosion.setDX(0); explosion.setDY(0);
@@ -499,7 +503,6 @@ void Game::drawRect(SDL_Texture* texture, SDL_Rect* src, int x, int y) {
 
 void Game::drawBackground() {
 	int w, h;
-	app.background = loadTexture("gfx/background.png");
 	SDL_QueryTexture(app.background, NULL, NULL, &w, &h);
 	if (-w > --backgroundX) {
 		backgroundX = 0;
