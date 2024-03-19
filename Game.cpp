@@ -5,14 +5,22 @@ void Game::start() {
 	initGame();
 	while (true) {
 		titleScreen();
-		while(app.playing) {
+		while (app.playing) {
 			prepareScene();
 			drawBackground();
+
 			if (player.getHealth()) {
 				getInput();
 			}
-			presentEntities();
-			HUD();
+
+			if (!app.pause) {
+				presentEntities();
+				HUD();
+			}
+			else {
+				Pause();
+			}
+
 			presentScene();
 		}
 		endScreen();
@@ -177,6 +185,12 @@ void Game::initGame() {
 	titleFont = TTF_OpenFont("font/Ghost.ttf", 90);
 	Mix_PlayMusic(music, -1);
 
+	pauseIcon = loadTexture("gfx/pauseIcon (2).png");
+	if (pauseIcon == NULL) {
+		std::cout << SDL_GetError();
+		exit(-1);
+	}
+
 	enemySpawnTimer = 60;
 	score = 0;
 	highScore = 0;
@@ -201,10 +215,27 @@ void Game::getInput() {
 			player.keyUp(&e.key);
 			break;
 		case SDL_KEYDOWN:
+			if (e.key.keysym.scancode == SDL_SCANCODE_P) {
+				app.pause = !app.pause;
+				if (Mix_PausedMusic()) {
+					Mix_ResumeMusic();
+				}
+				else {
+					Mix_PauseMusic();
+				}
+			}
 			player.keyDown(&e.key);
 			break;
 		}
 	}
+}
+
+void Game::Pause() {
+	draw(pauseIcon, SCREEN_WIDTH / 2 - 210, SCREEN_HEIGHT / 2 - 225);
+	string gamepause = "GAME PAUSED";
+	SDL_Surface* pauseSf = TTF_RenderText_Solid(font, gamepause.c_str(), { 255, 255, 255, 0 });
+	SDL_Texture* pauseTXT = SDL_CreateTextureFromSurface(app.renderer, pauseSf);
+	draw(pauseTXT, SCREEN_WIDTH / 2 - 100, 3 * SCREEN_HEIGHT / 4 - 50);
 }
 
 void Game::presentEntities() {
@@ -216,8 +247,8 @@ void Game::presentEntities() {
 	int wP, hP;
 	if (player.Fire() == true && player.getReload() == 0) {
 		SDL_QueryTexture(player.getTexture(), NULL, NULL, &wP, &hP);
-		playerBullet.setX(player.getX() + wP/2);
-		playerBullet.setY(player.getY() + hP/2);
+		playerBullet.setX(player.getX() + wP / 2);
+		playerBullet.setY(player.getY() + hP / 2);
 		playerBullet.setType(1);
 		player.setReload(5);
 		Bullets.push_back(playerBullet);
@@ -237,11 +268,25 @@ void Game::presentEntities() {
 	if (enemySpawnTimer == 0) {
 		enemy = new Enemy();
 		enemy->setTexture(enemyTexture);
-		enemy->setX(SCREEN_WIDTH - 80);
-		enemy->setDX(ENEMY_SPEED);
+		int rate = rand() % 4;
+		if (rate < 2) {
+			enemy->setX(SCREEN_WIDTH - 80);
+			enemy->setDX(ENEMY_SPEED - rand() % 8);
+			enemy->setY(rand() % 400 + 100);
+		}
+		else {
+			enemy->setX(SCREEN_WIDTH / 2 + rand() % 200);
+			if (rate == 1) {
+				enemy->setDY(-ENEMY_SPEED + rand() % 8);
+				enemy->setY(-10);
+			}
+			else {
+				enemy->setDY(ENEMY_SPEED - rand() % 8);
+				enemy->setY(690);
+			}
+		}
 		enemy->setHealth(1);
 		enemySpawnTimer = 60;
-		enemy->setY(rand() % 400 + 100);
 		Enemies.push_back(enemy);
 	}
 
@@ -249,7 +294,7 @@ void Game::presentEntities() {
 	for (auto i = Enemies.begin(); i != Enemies.end(); ) {
 		int w, h;
 		SDL_QueryTexture((*i)->getTexture(), NULL, NULL, &w, &h);
-		if ((*i)->getX() <= -w ){
+		if ((*i)->getX() <= -w) {
 			i = Enemies.erase(i);
 		}
 		else if (!(*i)->getHealth()) {
@@ -257,25 +302,29 @@ void Game::presentEntities() {
 			score++;
 			Mix_PlayChannel(-1, explosionSound, 0);
 			i = Enemies.erase(i);
-		} else {
+		}
+		else {
 			if ((*i)->getReload() > 0) (*i)->setReload((*i)->getReload() - 1);
 			else {
 				enemyBullet.setTexture(enemyBulletTexture);
-				enemyBullet.setX((*i)->getX() - w/2);
-				enemyBullet.setY((*i)->getY() + h/2);
+				enemyBullet.setX((*i)->getX() - w / 2);
+				enemyBullet.setY((*i)->getY() + h / 2);
 				float dx = player.getX() - enemyBullet.getX();
 				float dy = player.getY() - enemyBullet.getY();
 				float distance = sqrt(dx * dx + dy * dy);
 				dx /= distance;
 				dy /= distance;
-				enemyBullet.setDX(dx * ENEMY_BULLET_SPEED);
-				enemyBullet.setDY(dy * ENEMY_BULLET_SPEED);
+				enemyBullet.setDX(dx * (ENEMY_BULLET_SPEED + rand() % 8));
+				enemyBullet.setDY(dy * (ENEMY_BULLET_SPEED + rand() % 8));
 				enemyBullet.setHealth(1);
 				enemyBullet.setType(0);
-				(*i)->setReload(60);
+				(*i)->setReload(30 + rand() % 30);
 				Bullets.push_back(enemyBullet);
 			}
 			(*i)->move();
+			if ( ((*i)->getY() < 0 && (*i)->getDY() < 0) || ((*i)->getY() > 680 && (*i)->getDY() > 0) ) {
+				(*i)->setDY(-(*i)->getDY());
+			}
 			draw((*i)->getTexture(), (*i)->getX(), (*i)->getY());
 			i++;
 		}
@@ -314,11 +363,11 @@ void Game::presentEntities() {
 			if (i->Type() && detectCollision(i->getX(), i->getY(), wB, hB, (*j)->getX(), (*j)->getY(), wE, hE)) {
 				i->setHealth(0);
 				(*j)->setHealth(0);
-				int num = rand() % 100 + 1;
-				if (num < 30) {
+				int num = rand() % 10 + 1;
+				if (num < 2) {
 					addPowerUp((*j)->getX(), (*j)->getY(), 1);
 				}
-				else if (num < 50) {
+				else if (num < 3) {
 					addPowerUp((*j)->getX(), (*j)->getY(), 2);
 				}
 			}
@@ -434,8 +483,8 @@ void Game::addExplosion(int x, int y, int type) {
 }
 
 void Game::addPowerUp(int x, int y, int type) {
-	if(type == 1) powerup.setTexture(loadTexture("gfx/bonusHP.png"));
-	else if(type == 2) powerup.setTexture(loadTexture("gfx/enchanceATK.png"));
+	if(type == 1) powerup.setTexture(loadTexture("gfx/LP.png"));
+	else if(type == 2) powerup.setTexture(loadTexture("gfx/enhanceATK.png"));
 	powerup.setX(x + 20);
 	powerup.setY(y + 20);
 	powerup.setDX( -rand() % 5  - 1);

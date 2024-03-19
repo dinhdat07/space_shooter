@@ -13,6 +13,7 @@ private:
 		SDL_Window* window;
 		SDL_Texture* background;
 		bool playing;
+		bool pause = 0;
 	} app;
 
 	Player player;
@@ -35,6 +36,8 @@ private:
 
 	std::vector<Entity> powerUps;
 	Entity powerup;
+
+	SDL_Texture* pauseIcon;
 
 	//sound and music
 	Mix_Chunk* explosionSound = NULL;
@@ -67,6 +70,7 @@ private:
 	SDL_Texture* loadTexture(std::string);
 	bool detectCollision(int, int, int, int, int, int, int, int);
 	void endScreen();
+	void Pause();
 public:
 	void start();
 };
