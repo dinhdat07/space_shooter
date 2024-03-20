@@ -5,6 +5,7 @@
 #include "Player.hpp"
 #include "Enemy.hpp"
 #include "Effect.hpp"
+#include "Button.hpp"
 
 class Game {
 private:
@@ -51,12 +52,20 @@ private:
 	TTF_Font* font = NULL;
 	TTF_Font* titleFont = NULL;
 
+	//menu
+	Button menuButton[3];
+	Button endButton[2];
+	Button backButton;
+	SDL_Texture* guide;
+	bool playAgain;
+
 	int score, highScore;
 	std::stringstream scoreText, hScoreText, LPText;
 
 
 	void initGame();
 	void titleScreen();
+	void Guide();
 	void initPlayer();
 	void presentEntities();
 	void getInput();

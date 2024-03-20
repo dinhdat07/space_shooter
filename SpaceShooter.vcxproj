@@ -18,11 +18,81 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="C:\Users\DINH DAT PC\Downloads\space-shooter-sdl2-master\space-shooter-sdl2-master\src\scores.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="font\Ghost.ttf" />
+    <Font Include="font\Goldeneye.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\SpaceShooter\Button.hpp" />
+    <ClInclude Include="..\SpaceShooter\common.h" />
+    <ClInclude Include="..\SpaceShooter\Effect.hpp" />
+    <ClInclude Include="..\SpaceShooter\Enemy.hpp" />
+    <ClInclude Include="..\SpaceShooter\Entity.hpp" />
+    <ClInclude Include="..\SpaceShooter\Game.hpp" />
+    <ClInclude Include="..\SpaceShooter\Player.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\SpaceShooter\Button.cpp" />
+    <ClCompile Include="..\SpaceShooter\Effect.cpp" />
+    <ClCompile Include="..\SpaceShooter\Enemy.cpp" />
+    <ClCompile Include="..\SpaceShooter\Entity.cpp" />
+    <ClCompile Include="..\SpaceShooter\Game.cpp" />
+    <ClCompile Include="..\SpaceShooter\main.cpp" />
+    <ClCompile Include="..\SpaceShooter\Player.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="music\backgroundMusic.ogg" />
+    <None Include="sound\bulletSound.ogg" />
+    <None Include="sound\earnPowerUp.ogg" />
+    <None Include="sound\enemyBulletSound.ogg" />
+    <None Include="sound\enemyExplosion.ogg" />
+    <None Include="sound\explosionSound.ogg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="gfx\alienBullet.png" />
+    <Image Include="gfx\backButton.png" />
+    <Image Include="gfx\background.png" />
+    <Image Include="gfx\backHoverButton.png" />
+    <Image Include="gfx\Button.png" />
+    <Image Include="gfx\enemy.png" />
+    <Image Include="gfx\enemyR.png" />
+    <Image Include="gfx\enhanceATK.png" />
+    <Image Include="gfx\exitButton.png" />
+    <Image Include="gfx\exitHoverButton.png" />
+    <Image Include="gfx\explosion.png" />
+    <Image Include="gfx\font.png" />
+    <Image Include="gfx\guide.png" />
+    <Image Include="gfx\guideButton.png" />
+    <Image Include="gfx\guideHoverButton.png" />
+    <Image Include="gfx\hoverButton.png" />
+    <Image Include="gfx\LP.png" />
+    <Image Include="gfx\menuButton.png" />
+    <Image Include="gfx\menuHoverButton.png" />
+    <Image Include="gfx\pauseIcon (2).png" />
+    <Image Include="gfx\pauseIcon.png" />
+    <Image Include="gfx\playButton.png" />
+    <Image Include="gfx\player.png" />
+    <Image Include="gfx\playerBullet.png" />
+    <Image Include="gfx\playerR.png" />
+    <Image Include="gfx\playHoverButton.png" />
+    <Image Include="gfx\points.png" />
+    <Image Include="gfx\sdl2.png" />
+    <Image Include="gfx\shooter.png" />
+    <Image Include="gfx\spaceBackgroundR.png" />
+    <Image Include="gfx\startButton.png" />
+    <Image Include="gfx\startHoverButton.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="sound\buttonSound.mp3" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{b257e870-07bf-4cb4-890a-8baca916c904}</ProjectGuid>
-    <RootNamespace>SpaceShooter</RootNamespace>
+    <ProjectGuid>{2f64d99f-f303-4c9e-85b0-bb2dfd1359e4}</ProjectGuid>
+    <RootNamespace>SetUpSDL2</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -104,13 +174,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Program Files\SDL2_lib\SDL2-2.28.5\include;C:\Program Files\SDL2_lib\SDL2_ttf-2.22.0\include;C:\Program Files\SDL2_lib\SDL2_mixer-2.8.0\include;C:\Program Files\SDL2_lib\SDL2_image-2.8.2\include;C:\Program Files\SDL2_lib\SDL2_net-2.2.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files\SDL2_lib\SDL2_image-2.8.2\include;C:\Program Files\SDL2_lib\SDL2_mixer-2.8.0\include;C:\Program Files\SDL2_lib\SDL2_ttf-2.22.0\include;C:\Program Files\SDL2_lib\SDL2-2.28.5\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Program Files\SDL2_lib\SDL2-2.28.5\lib\x64;C:\Program Files\SDL2_lib\SDL2_ttf-2.22.0\lib\x64;C:\Program Files\SDL2_lib\SDL2_mixer-2.8.0\lib\x64;C:\Program Files\SDL2_lib\SDL2_image-2.8.2\lib\x64;C:\Program Files\SDL2_lib\SDL2_net-2.2.0\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2test.lib;SDL2_ttf.lib;SDL2_mixer.lib;SDL2_image.lib;SDL2_net.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Program Files\SDL2_lib\SDL2_image-2.8.2\lib\x64;C:\Program Files\SDL2_lib\SDL2_mixer-2.8.0\lib\x64;C:\Program Files\SDL2_lib\SDL2_ttf-2.22.0\lib\x64;C:\Program Files\SDL2_lib\SDL2-2.28.5\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2test.lib;SDL2_image.lib;SDL2_mixer.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -129,48 +199,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="Effect.cpp" />
-    <ClCompile Include="Enemy.cpp" />
-    <ClCompile Include="Entity.cpp" />
-    <ClCompile Include="Game.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Game.hpp" />
-    <ClCompile Include="Player.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Effect.hpp" />
-    <ClInclude Include="Enemy.hpp" />
-    <ClInclude Include="Entity.hpp" />
-    <ClInclude Include="Player.hpp" />
-    <ClInclude Include="common.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="gfx\alienBullet.png" />
-    <Image Include="gfx\background.png" />
-    <Image Include="gfx\enemy.png" />
-    <Image Include="gfx\enemyR.png" />
-    <Image Include="gfx\explosion.png" />
-    <Image Include="gfx\font.png" />
-    <Image Include="gfx\player.png" />
-    <Image Include="gfx\playerBullet.png" />
-    <Image Include="gfx\playerR.png" />
-    <Image Include="gfx\points.png" />
-    <Image Include="gfx\sdl2.png" />
-    <Image Include="gfx\shooter.png" />
-    <Image Include="gfx\spaceBackgroundR.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="music\backgroundMusic.ogg" />
-    <None Include="sound\10 Guage Shotgun-SoundBible.com-74120584.ogg" />
-    <None Include="sound\bulletSound.ogg" />
-    <None Include="sound\earnPowerUp.ogg" />
-    <None Include="sound\enemyBulletSound.ogg" />
-    <None Include="sound\explosionSound.ogg" />
-  </ItemGroup>
-  <ItemGroup>
-    <Font Include="font\Ghost.ttf" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

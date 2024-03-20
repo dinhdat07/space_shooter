@@ -4,7 +4,9 @@ using namespace std;
 void Game::start() {
 	initGame();
 	while (true) {
-		titleScreen();
+		if (!playAgain) {
+			titleScreen();
+		}
 		while (app.playing) {
 			prepareScene();
 			drawBackground();
@@ -41,16 +43,21 @@ void Game::titleScreen() {
 	SDL_Texture* pressTXT = SDL_CreateTextureFromSurface(app.renderer, pressSf);
 	while (true) {
 		drawBackground();
-		draw(tSTXT, SCREEN_WIDTH/4, 200);
-		draw(tShTXT, SCREEN_WIDTH/4 + 100, 300);
-		draw(pressTXT, SCREEN_WIDTH / 4 + 75, 400);
+		draw(tSTXT, SCREEN_WIDTH/4, 100);
+		draw(tShTXT, SCREEN_WIDTH/4 + 100, 200);
+		draw(pressTXT, SCREEN_WIDTH / 4 + 75, 300);
+		for (int i = 0; i < 3; i++) {
+			draw(menuButton[i].getTexture(), menuButton[i].getX(), menuButton[i].getY());
+		}
 		presentScene();
 
+		int x, y;
 		while (SDL_PollEvent(&e)) {
 			switch (e.type) {
 			case SDL_QUIT:
 				exit(0);
 				break;
+
 			case SDL_KEYDOWN:
 				if (e.key.keysym.scancode == SDL_SCANCODE_SPACE) {
 					app.playing = true;
@@ -60,12 +67,54 @@ void Game::titleScreen() {
 				if (e.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
 					exit(0);
 				}
-				if (e.key.keysym.scancode == SDL_SCANCODE_1) {
+				if (e.key.keysym.scancode == SDL_SCANCODE_M) {
 					if (Mix_PausedMusic()) {
 						Mix_ResumeMusic();
 					}
 					else {
 						Mix_PauseMusic();
+					}
+				}
+				break;
+
+			case SDL_MOUSEMOTION:
+				SDL_GetMouseState(&x, &y);
+				for (int i = 0; i < 3; i++) {
+					if (x >= menuButton[i].getX() && x <= menuButton[i].getX() + menuButton[i].getW() 
+					&& y >= menuButton[i].getY() && y <= menuButton[i].getY() + menuButton[i].getH()) {
+						if (!menuButton[i].isHovered()) {
+							menuButton[i].setHovered(true);
+							if (i == 0) menuButton[i].setTexture(loadTexture("gfx/startHoverButton.png"));
+							if (i == 1) menuButton[i].setTexture(loadTexture("gfx/guideHoverButton.png"));
+							if (i == 2) menuButton[i].setTexture(loadTexture("gfx/exitHoverButton.png"));
+						}
+					} else if (menuButton[i].isHovered()) {
+						menuButton[i].setHovered(false);
+						if (i == 0) menuButton[i].setTexture(loadTexture("gfx/startButton.png"));
+						if (i == 1) menuButton[i].setTexture(loadTexture("gfx/guideButton.png"));
+						if (i == 2) menuButton[i].setTexture(loadTexture("gfx/exitButton.png"));
+					}
+				}
+				break;
+
+			case SDL_MOUSEBUTTONDOWN:
+				SDL_GetMouseState(&x, &y);
+				for (int i = 0; i < 3; ++i) {
+					if (x >= menuButton[i].getX() && x <= menuButton[i].getX() + menuButton[i].getW()) {
+						if (y >= menuButton[i].getY() && y <= menuButton[i].getY() + menuButton[i].getH()) {
+							Mix_PlayChannel(-1, buttonSound, 0);
+							if (i == 0) {
+								app.playing = true;
+								initPlayer();
+								return;
+							}
+							else if (i == 1) {
+								Guide();
+							}
+							else {
+								exit(0);
+							}
+						}
 					}
 				}
 				break;
@@ -74,25 +123,24 @@ void Game::titleScreen() {
 	}
 }
 
-void Game::endScreen() {
+
+void Game::Guide() {
 	SDL_Event e;
-	string gameover = "GAME OVER";
-	string endScore = "Your score: " + to_string(score);
-	string instruct = "Want to start over? Press Space";
+	backButton.setY(600);
+	backButton.setX(450);
+	backButton.setTexture(loadTexture("gfx/backButton.png"));
+	int w, h;
+	SDL_QueryTexture(backButton.getTexture(), NULL, NULL, &w, &h);
+	backButton.setW(w);
+	backButton.setH(h);
 
-	SDL_Surface* endSf = TTF_RenderText_Solid(titleFont, gameover.c_str(), { 255, 255, 255, 0 });
-	SDL_Texture* endTXT = SDL_CreateTextureFromSurface(app.renderer, endSf);
+	SDL_Texture* guide = loadTexture("gfx/guide.png");
 
-	SDL_Surface* scoreSf = TTF_RenderText_Solid(font, endScore.c_str(), { 255, 255, 255, 0 });
-	SDL_Texture* scoreTXT = SDL_CreateTextureFromSurface(app.renderer, scoreSf);
-
-	SDL_Surface* instructSf = TTF_RenderText_Solid(font, instruct.c_str(), { 255, 255, 255, 0 });
-	SDL_Texture* instructTXT = SDL_CreateTextureFromSurface(app.renderer, instructSf);
+	int x, y;
 	while (true) {
 		drawBackground();
-		draw(endTXT, SCREEN_WIDTH / 4, 200);
-		draw(scoreTXT, SCREEN_WIDTH / 4 + 225, 350);
-		draw(instructTXT, SCREEN_WIDTH / 4 + 100, 400);
+		draw(backButton.getTexture(), backButton.getX(), backButton.getY());
+		draw(guide, 0, 25);
 		presentScene();
 
 		while (SDL_PollEvent(&e)) {
@@ -101,17 +149,10 @@ void Game::endScreen() {
 				exit(0);
 				break;
 			case SDL_KEYDOWN:
-				if (e.key.keysym.scancode == SDL_SCANCODE_SPACE) {
-					enemySpawnTimer = 60;
-					score = 0;
-					app.playing = true;
-					initPlayer();
+				if (e.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
 					return;
 				}
-				if (e.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
-					exit(0);
-				}
-				if (e.key.keysym.scancode == SDL_SCANCODE_1) {
+				if (e.key.keysym.scancode == SDL_SCANCODE_M) {
 					if (Mix_PausedMusic()) {
 						Mix_ResumeMusic();
 					}
@@ -120,10 +161,127 @@ void Game::endScreen() {
 					}
 				}
 				break;
+			case SDL_MOUSEMOTION:
+				SDL_GetMouseState(&x, &y);
+				if (x >= backButton.getX() && x <= backButton.getX() + backButton.getW()
+				&& y >= backButton.getY() && y <= backButton.getY() + backButton.getH()) {
+					if (!backButton.isHovered()) {
+						backButton.setHovered(true);
+						backButton.setTexture(loadTexture("gfx/backHoverButton.png"));
+					}
+				} else if (backButton.isHovered()) {
+					backButton.setHovered(false);
+					backButton.setTexture(loadTexture("gfx/backButton.png"));
+				}
+				break;
+
+			case SDL_MOUSEBUTTONDOWN:
+				SDL_GetMouseState(&x, &y);
+				if (x >= backButton.getX() && x <= backButton.getX() + backButton.getW()
+				&& y >= backButton.getY() && y <= backButton.getY() + backButton.getH()) {
+					Mix_PlayChannel(-1, buttonSound, 0);
+					return;
+				}
+				break;
+			}
+		}
+	}
+}
+
+
+void Game::endScreen() {
+	SDL_Event e;
+	string gameover = "GAME OVER";
+	string endScore = "Your score: " + to_string(score);
+
+	SDL_Surface* endSf = TTF_RenderText_Solid(titleFont, gameover.c_str(), { 255, 255, 255, 0 });
+	SDL_Texture* endTXT = SDL_CreateTextureFromSurface(app.renderer, endSf);
+
+	SDL_Surface* scoreSf = TTF_RenderText_Solid(font, endScore.c_str(), { 255, 255, 255, 0 });
+	SDL_Texture* scoreTXT = SDL_CreateTextureFromSurface(app.renderer, scoreSf);
+
+	while (true) {
+		drawBackground();
+		draw(endTXT, SCREEN_WIDTH / 4, 200);
+		draw(scoreTXT, SCREEN_WIDTH / 4 + 225, 350);
+		for (int i = 0; i < 2; i++) {
+			draw(endButton[i].getTexture(), endButton[i].getX(), endButton[i].getY());
+		}
+		presentScene();
+
+		int x, y;
+		while (SDL_PollEvent(&e)) {
+			switch (e.type) {
+				case SDL_QUIT:
+					exit(0);
+					break;
+
+				case SDL_KEYDOWN:
+					if (e.key.keysym.scancode == SDL_SCANCODE_SPACE) {
+						enemySpawnTimer = 60;
+						score = 0;
+						playAgain = true;
+						app.playing = true;
+						initPlayer();
+						return;
+					}
+					if (e.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
+						exit(0);
+					}
+					if (e.key.keysym.scancode == SDL_SCANCODE_1) {
+						if (Mix_PausedMusic()) {
+							Mix_ResumeMusic();
+						}
+						else {
+							Mix_PauseMusic();
+						}
+					}
+					break;
+
+				case SDL_MOUSEMOTION:
+					SDL_GetMouseState(&x, &y);
+					for (int i = 0; i < 2; i++) {
+						if (x >= endButton[i].getX() && x <= endButton[i].getX() + endButton[i].getW()
+							&& y >= endButton[i].getY() && y <= endButton[i].getY() + endButton[i].getH()) {
+							if (!endButton[i].isHovered()) {
+								endButton[i].setHovered(true);
+								if (i == 0) endButton[i].setTexture(loadTexture("gfx/menuHoverButton.png"));
+								if (i == 1) endButton[i].setTexture(loadTexture("gfx/playHoverButton.png"));
+							}
+						}
+						else if (endButton[i].isHovered()) {
+							endButton[i].setHovered(false);
+							if (i == 0) endButton[i].setTexture(loadTexture("gfx/menuButton.png"));
+							if (i == 1) endButton[i].setTexture(loadTexture("gfx/playButton.png"));
+						}
+					}
+					break;
+
+				case SDL_MOUSEBUTTONDOWN:
+					SDL_GetMouseState(&x, &y);
+					for (int i = 0; i < 2; i++) {
+						if (x >= endButton[i].getX() && x <= endButton[i].getX() + endButton[i].getW()
+							&& y >= endButton[i].getY() && y <= endButton[i].getY() + endButton[i].getH()) {
+							    Mix_PlayChannel(-1, buttonSound, 0);
+								enemySpawnTimer = 60;
+								score = 0;
+								if (i == 0) {
+									playAgain = false;
+								} else {
+									playAgain = true;
+									app.playing = true;
+									initPlayer();
+								}
+								return;
+						}
+					}
+					break;
+
 			}
 		}
 
 	}
+
 }
 
 void Game::initGame() {
@@ -176,7 +334,7 @@ void Game::initGame() {
 	music = Mix_LoadMUS("music/backgroundMusic.ogg");
 	explosionSound = Mix_LoadWAV("sound/enemyExplosion.ogg");
 	playerExplosionSound = Mix_LoadWAV("sound/explosionSound.ogg");
-	buttonSound = Mix_LoadWAV("sound/buttonSound.ogg");
+	buttonSound = Mix_LoadWAV("sound/buttonSound.mp3");
 	bulletSound = Mix_LoadWAV("sound/bulletSound.ogg");
 	powerupSound = Mix_LoadWAV("sound/earnPowerUp.ogg");
 
@@ -185,11 +343,46 @@ void Game::initGame() {
 	titleFont = TTF_OpenFont("font/Ghost.ttf", 90);
 	Mix_PlayMusic(music, -1);
 
-	pauseIcon = loadTexture("gfx/pauseIcon (2).png");
-	if (pauseIcon == NULL) {
-		std::cout << SDL_GetError();
-		exit(-1);
+	//Button
+	int w, h;
+	menuButton[0].setTexture(loadTexture("gfx/startButton.png"));
+	menuButton[1].setTexture(loadTexture("gfx/guideButton.png"));
+	menuButton[2].setTexture(loadTexture("gfx/exitButton.png"));
+	for (int i = 0; i < 3; i++) {
+		menuButton[i].setX(475);
+		menuButton[i].setY(SCREEN_WIDTH / 4 + 25);
+		SDL_QueryTexture(menuButton[i].getTexture(), NULL, NULL, &w, &h);
+		menuButton[i].setW(w);
+		menuButton[i].setH(h);
+		if (i) {
+			menuButton[i].setY(menuButton[i - 1].getY() + menuButton[i - 1].getH() + 25);
+		}
 	}
+
+	backButton.setY(600);
+	backButton.setX(450);
+	backButton.setTexture(loadTexture("gfx/backButton.png"));
+	SDL_QueryTexture(backButton.getTexture(), NULL, NULL, &w, &h);
+	backButton.setW(w);
+	backButton.setH(h);
+
+	endButton[0].setTexture(loadTexture("gfx/menuButton.png"));
+	endButton[1].setTexture(loadTexture("gfx/playButton.png"));
+	for (int i = 0; i < 2; i++) {
+		endButton[i].setX(SCREEN_WIDTH / 4 + 25);
+		endButton[i].setY(500);
+		SDL_QueryTexture(endButton[i].getTexture(), NULL, NULL, &w, &h);
+		endButton[i].setW(w);
+		endButton[i].setH(h);
+		if (i) {
+			endButton[i].setX(endButton[i - 1].getX() + endButton[i - 1].getW() + 50);
+		}
+	}
+
+	playAgain = false;
+
+	pauseIcon = loadTexture("gfx/pauseIcon (2).png");
+	SDL_Texture* guide = loadTexture("gfx/guide.png");
 
 	enemySpawnTimer = 60;
 	score = 0;
@@ -216,11 +409,13 @@ void Game::getInput() {
 			break;
 		case SDL_KEYDOWN:
 			if (e.key.keysym.scancode == SDL_SCANCODE_P) {
+				Mix_PlayChannel(-1, buttonSound, 0);
 				app.pause = !app.pause;
+			}
+			if (e.key.keysym.scancode == SDL_SCANCODE_M) {
 				if (Mix_PausedMusic()) {
 					Mix_ResumeMusic();
-				}
-				else {
+				} else {
 					Mix_PauseMusic();
 				}
 			}
