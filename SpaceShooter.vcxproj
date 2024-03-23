@@ -19,9 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="C:\Users\DINH DAT PC\Downloads\space-shooter-sdl2-master\space-shooter-sdl2-master\src\scores.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <Font Include="font\Ghost.ttf" />
     <Font Include="font\Goldeneye.ttf" />
   </ItemGroup>
@@ -87,6 +84,9 @@
   </ItemGroup>
   <ItemGroup>
     <Media Include="sound\buttonSound.mp3" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="scores.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

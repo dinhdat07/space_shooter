@@ -27,11 +27,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="C:\Users\DINH DAT PC\Downloads\space-shooter-sdl2-master\space-shooter-sdl2-master\src\scores.txt">
-      <Filter>Source Files</Filter>
-    </Text>
-  </ItemGroup>
-  <ItemGroup>
     <Font Include="font\Ghost.ttf">
       <Filter>Resource Files\fonts</Filter>
     </Font>
@@ -207,5 +202,10 @@
     <Media Include="sound\buttonSound.mp3">
       <Filter>Resource Files\sound</Filter>
     </Media>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="scores.txt">
+      <Filter>Source Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

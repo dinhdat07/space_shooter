@@ -193,6 +193,7 @@ void Game::endScreen() {
 	SDL_Event e;
 	string gameover = "GAME OVER";
 	string endScore = "Your score: " + to_string(score);
+	string congrat = "Congrat. You achieve new high score!";
 
 	SDL_Surface* endSf = TTF_RenderText_Solid(titleFont, gameover.c_str(), { 255, 255, 255, 0 });
 	SDL_Texture* endTXT = SDL_CreateTextureFromSurface(app.renderer, endSf);
@@ -200,10 +201,23 @@ void Game::endScreen() {
 	SDL_Surface* scoreSf = TTF_RenderText_Solid(font, endScore.c_str(), { 255, 255, 255, 0 });
 	SDL_Texture* scoreTXT = SDL_CreateTextureFromSurface(app.renderer, scoreSf);
 
+	SDL_Surface* congratSf = TTF_RenderText_Solid(font, congrat.c_str(), { 232, 46, 46, 0 });
+	SDL_Texture* congratTXT = SDL_CreateTextureFromSurface(app.renderer, congratSf);
+
+	if (surpass) {
+		ofstream fout("scores.txt");
+		fout << highScore << endl;
+		fout.close();
+	}
+
 	while (true) {
 		drawBackground();
 		draw(endTXT, SCREEN_WIDTH / 4, 200);
 		draw(scoreTXT, SCREEN_WIDTH / 4 + 225, 350);
+		if (surpass) {
+			draw(congratTXT, SCREEN_WIDTH / 4 + 100, 400);
+		}
+
 		for (int i = 0; i < 2; i++) {
 			draw(endButton[i].getTexture(), endButton[i].getX(), endButton[i].getY());
 		}
@@ -219,6 +233,7 @@ void Game::endScreen() {
 				case SDL_KEYDOWN:
 					if (e.key.keysym.scancode == SDL_SCANCODE_SPACE) {
 						enemySpawnTimer = 60;
+						surpass = 0;
 						score = 0;
 						playAgain = true;
 						app.playing = true;
@@ -228,7 +243,7 @@ void Game::endScreen() {
 					if (e.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
 						exit(0);
 					}
-					if (e.key.keysym.scancode == SDL_SCANCODE_1) {
+					if (e.key.keysym.scancode == SDL_SCANCODE_M) {
 						if (Mix_PausedMusic()) {
 							Mix_ResumeMusic();
 						}
@@ -264,6 +279,7 @@ void Game::endScreen() {
 							&& y >= endButton[i].getY() && y <= endButton[i].getY() + endButton[i].getH()) {
 							    Mix_PlayChannel(-1, buttonSound, 0);
 								enemySpawnTimer = 60;
+								surpass = 0;
 								score = 0;
 								if (i == 0) {
 									playAgain = false;
@@ -333,7 +349,7 @@ void Game::initGame() {
 
 	music = Mix_LoadMUS("music/backgroundMusic.ogg");
 	explosionSound = Mix_LoadWAV("sound/enemyExplosion.ogg");
-	playerExplosionSound = Mix_LoadWAV("sound/explosionSound.ogg");
+	playerExplosionSound = Mix_LoadWAV("sound/explosionSound.wav");
 	buttonSound = Mix_LoadWAV("sound/buttonSound.mp3");
 	bulletSound = Mix_LoadWAV("sound/bulletSound.ogg");
 	powerupSound = Mix_LoadWAV("sound/earnPowerUp.ogg");
@@ -386,7 +402,14 @@ void Game::initGame() {
 
 	enemySpawnTimer = 60;
 	score = 0;
-	highScore = 0;
+
+	ifstream fin("scores.txt");
+	if (!fin.is_open()) {
+		std::cout << "Can't open file scores.txt";
+		exit(-1);
+	}
+	fin >> highScore;
+	fin.close();
 }
 
 void Game::initPlayer() {
@@ -480,7 +503,7 @@ void Game::presentEntities() {
 				enemy->setY(690);
 			}
 		}
-		enemy->setHealth(1);
+		enemy->setHealth(5);
 		enemySpawnTimer = 60;
 		Enemies.push_back(enemy);
 	}
@@ -516,10 +539,12 @@ void Game::presentEntities() {
 				(*i)->setReload(30 + rand() % 30);
 				Bullets.push_back(enemyBullet);
 			}
+
 			(*i)->move();
-			if ( ((*i)->getY() < 0 && (*i)->getDY() < 0) || ((*i)->getY() > 680 && (*i)->getDY() > 0) ) {
+			if ( ((*i)->getY() < 0 && (*i)->getDY() < 0) || ((*i)->getY() > 640 && (*i)->getDY() > 0) ) {
 				(*i)->setDY(-(*i)->getDY());
 			}
+
 			draw((*i)->getTexture(), (*i)->getX(), (*i)->getY());
 			i++;
 		}
@@ -552,20 +577,30 @@ void Game::presentEntities() {
 			}
 		}
 		for (auto j = Enemies.begin(); j != Enemies.end(); j++) {
-			int wE, hE, wP, hP;
+			int wE, hE;
 			SDL_QueryTexture((*j)->getTexture(), NULL, NULL, &wE, &hE);
-			SDL_QueryTexture(player.getTexture(), NULL, NULL, &wP, &hP);
+
 			if (i->Type() && detectCollision(i->getX(), i->getY(), wB, hB, (*j)->getX(), (*j)->getY(), wE, hE)) {
 				i->setHealth(0);
-				(*j)->setHealth(0);
-				int num = rand() % 10 + 1;
-				if (num < 2) {
-					addPowerUp((*j)->getX(), (*j)->getY(), 1);
-				}
-				else if (num < 3) {
-					addPowerUp((*j)->getX(), (*j)->getY(), 2);
+				(*j)->setHealth((*j)->getHealth() - 1);
+				if (!(*j)->getHealth()) {
+					int num = rand() % 10 + 1;
+					if (num < 2) {
+						addPowerUp((*j)->getX(), (*j)->getY(), 1);
+					}
+					else if (num < 3) {
+						addPowerUp((*j)->getX(), (*j)->getY(), 2);
+					}
 				}
 			}
+
+			if (detectCollision(player.getX(), player.getY(), wP, hP, (*j)->getX(), (*j)->getY(), wE, hE)) {
+				player.setHealth(0);
+				addExplosion(player.getX(), player.getY(), 1);
+				Mix_PlayChannel(-1, playerExplosionSound, 0);
+				(*j)->setHealth(0);
+			}
+
 		}
 	}
 
@@ -607,7 +642,7 @@ void Game::presentEntities() {
 			SDL_QueryTexture(player.getTexture(), NULL, NULL, &wP, &hP);
 			if (detectCollision(i->getX(), i->getY(), wPU, hPU, player.getX(), player.getY(), wP, hP)) {
 				if (i->Type() == 1) {
-					player.setHealth(player.getHealth() + 5);
+					player.setHealth(player.getHealth() + 4);
 				} else {
 					player.setEnhance(300);
 				}
@@ -626,6 +661,7 @@ void Game::presentEntities() {
 }
 
 void Game::HUD() {
+	if (score > highScore) surpass = 1;
 	highScore = max(highScore, score);
 	scoreText << "Score : " << score;
 	hScoreText << "High Score : " << highScore;
@@ -634,10 +670,10 @@ void Game::HUD() {
 	SDL_Surface* scoreSurface = TTF_RenderText_Solid(font, scoreText.str().c_str(), { 255, 255, 255, 0 });
 	SDL_Texture* scoreTXT = SDL_CreateTextureFromSurface(app.renderer, scoreSurface);
 
-	SDL_Surface* hsSurface = TTF_RenderText_Solid(font, hScoreText.str().c_str(), { 255, 255, 255, 0 });
+	SDL_Surface* hsSurface = TTF_RenderText_Solid(font, hScoreText.str().c_str(), { 181, 13, 13, 0 });
 	SDL_Texture* hsTXT = SDL_CreateTextureFromSurface(app.renderer, hsSurface);
 
-	SDL_Surface* LPSurface = TTF_RenderText_Solid(font, LPText.str().c_str(), { 255, 255, 255, 0 });
+	SDL_Surface* LPSurface = TTF_RenderText_Solid(font, LPText.str().c_str(), { 22, 184, 17, 0 });
 	SDL_Texture* LPTXT = SDL_CreateTextureFromSurface(app.renderer, LPSurface);
 
 	draw(scoreTXT, 20, 20);

@@ -60,6 +60,7 @@ private:
 	bool playAgain;
 
 	int score, highScore;
+	bool surpass = 0;
 	std::stringstream scoreText, hScoreText, LPText;
 
 

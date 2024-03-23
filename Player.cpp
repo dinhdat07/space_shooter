@@ -30,8 +30,8 @@ void Player::move() {
 		dx = PLAYER_SPEED;
 	}
 
-	x = (x + dx < 0 ? 0 : (x + dx > 1240 ? 1240 : x + dx));
-	y = (y + dy < 0 ? 0 : (y + dy > 680 ? 680 : y + dy));
+	x = (x + dx < 0 ? 0 : (x + dx > 1200 ? 1200 : x + dx));
+	y = (y + dy < 0 ? 0 : (y + dy > 640 ? 640 : y + dy));
 	dx = dy = 0;
 }
 
