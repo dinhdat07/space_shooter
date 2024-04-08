@@ -17,6 +17,7 @@ private:
 		bool pause = 0;
 	} app;
 
+	SDL_Texture* shipModel[5];
 	Player player;
 	Entity playerBullet;
 	std::vector <Entity> Bullets;
@@ -55,7 +56,9 @@ private:
 	//menu
 	Button menuButton[3];
 	Button endButton[2];
+	Button arrowButton[2];
 	Button backButton;
+	Button playButton;
 	SDL_Texture* guide;
 	bool playAgain;
 
@@ -66,6 +69,7 @@ private:
 
 	void initGame();
 	void titleScreen();
+	bool chooseSpaceship();
 	void Guide();
 	void initPlayer();
 	void presentEntities();
