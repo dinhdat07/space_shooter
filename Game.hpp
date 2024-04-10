@@ -18,6 +18,10 @@ private:
 	} app;
 
 	SDL_Texture* shipModel[5];
+	SDL_Texture* bulletModel[5];
+	int reloadRate;
+	int damageRate;
+
 	Player player;
 	Entity playerBullet;
 	std::vector <Entity> Bullets;

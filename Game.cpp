@@ -78,15 +78,16 @@ void Game::titleScreen() {
 			case SDL_MOUSEMOTION:
 				SDL_GetMouseState(&x, &y);
 				for (int i = 0; i < 3; i++) {
-					if (x >= menuButton[i].getX() && x <= menuButton[i].getX() + menuButton[i].getW() 
-					&& y >= menuButton[i].getY() && y <= menuButton[i].getY() + menuButton[i].getH()) {
+					if (x >= menuButton[i].getX() && x <= menuButton[i].getX() + menuButton[i].getW()
+						&& y >= menuButton[i].getY() && y <= menuButton[i].getY() + menuButton[i].getH()) {
 						if (!menuButton[i].isHovered()) {
 							menuButton[i].setHovered(true);
 							if (i == 0) menuButton[i].setTexture(loadTexture("gfx/startHoverButton.png"));
 							if (i == 1) menuButton[i].setTexture(loadTexture("gfx/guideHoverButton.png"));
 							if (i == 2) menuButton[i].setTexture(loadTexture("gfx/exitHoverButton.png"));
 						}
-					} else if (menuButton[i].isHovered()) {
+					}
+					else if (menuButton[i].isHovered()) {
 						menuButton[i].setHovered(false);
 						if (i == 0) menuButton[i].setTexture(loadTexture("gfx/startButton.png"));
 						if (i == 1) menuButton[i].setTexture(loadTexture("gfx/guideButton.png"));
@@ -120,7 +121,7 @@ void Game::titleScreen() {
 }
 
 
-bool Game:: chooseSpaceship() {
+bool Game::chooseSpaceship() {
 	SDL_Event e;
 	int w, h;
 	backButton.setY(550);
@@ -140,6 +141,10 @@ bool Game:: chooseSpaceship() {
 	string instruct = "Choose your spaceshooter";
 	SDL_Surface* insSf = TTF_RenderText_Solid(font, instruct.c_str(), { 255, 255, 255, 0 });
 	SDL_Texture* insTXT = SDL_CreateTextureFromSurface(app.renderer, insSf);
+
+	SDL_Texture* lock = loadTexture("gfx/lock.png");
+
+
 	int pos = 0;
 	SDL_Rect src;
 	src.w = src.h = 300;
@@ -149,7 +154,23 @@ bool Game:: chooseSpaceship() {
 		draw(insTXT, SCREEN_WIDTH / 4 + 150, 100);
 		draw(backButton.getTexture(), backButton.getX(), backButton.getY());
 		draw(playButton.getTexture(), playButton.getX(), playButton.getY());
-		drawRect(shipModel[pos], &src, SCREEN_WIDTH / 4 + 175 , 200);
+
+		if (pos == 0 || highScore >= pos * 25 + (pos - 1) * (pos - 1) * 5) {
+			drawRect(shipModel[pos], &src, SCREEN_WIDTH / 4 + 175, 200);
+		}
+		else {
+			string unlockRequire = "You have to reach at least " + to_string(pos * 25 + (pos - 1) * (pos - 1) * 5) + " high score to unlock this spaceship";
+			string currHS = "Your curent high score: " + to_string(highScore);
+			SDL_Surface* requireSf = TTF_RenderText_Solid(font, unlockRequire.c_str(), { 255, 0, 0, 0 });
+			SDL_Texture* requireTXT = SDL_CreateTextureFromSurface(app.renderer, requireSf);
+			SDL_Surface* currSf = TTF_RenderText_Solid(font, currHS.c_str(), { 255, 0, 0, 0 });
+			SDL_Texture* currTXT = SDL_CreateTextureFromSurface(app.renderer, currSf);
+			draw(requireTXT, SCREEN_WIDTH / 4 + 150, 550);
+			draw(currTXT, SCREEN_WIDTH / 4 + 150, 600);
+			drawRect(lock, &src, SCREEN_WIDTH / 4 + 175, 200);
+		}
+
+
 		for (int i = 0; i < 2; i++) {
 			draw(arrowButton[i].getTexture(), arrowButton[i].getX(), arrowButton[i].getY());
 		}
@@ -165,6 +186,16 @@ bool Game:: chooseSpaceship() {
 			case SDL_KEYDOWN:
 				if (e.key.keysym.scancode == SDL_SCANCODE_SPACE) {
 					player.setTexture(shipModel[pos]);
+					playerBullet.setTexture(bulletModel[pos]);
+
+					if (pos < 2) damageRate = 1;
+					else if (pos < 4) damageRate = 3;
+					else damageRate = 5;
+
+					if (pos % 2 == 0) reloadRate = 5;
+					else reloadRate = 4;
+					if (pos == 4) reloadRate = 3;
+
 					app.playing = true;
 					initPlayer();
 					return true;
@@ -257,6 +288,18 @@ bool Game:: chooseSpaceship() {
 					&& y >= playButton.getY() && y <= playButton.getY() + playButton.getH()) {
 					Mix_PlayChannel(-1, buttonSound, 0);
 					player.setTexture(shipModel[pos]);
+					playerBullet.setTexture(bulletModel[pos]);
+
+					if (pos < 2) damageRate = 1;
+					else if (pos < 4) damageRate = 3;
+					else damageRate = 5;
+					
+					if (pos % 2 == 0) reloadRate = 5;
+					else reloadRate = 4;
+					if (pos == 4) reloadRate = 3;
+
+					// 1 1 3 3 5
+					// 5 4 5 4 3
 					app.playing = true;
 					initPlayer();
 					return true;
@@ -485,10 +528,10 @@ void Game::initGame() {
 	app.playing = false;
 	app.background = loadTexture("gfx/background.png");
 
-	player.setTexture(loadTexture("gfx/player.png"));
+	//player.setTexture(loadTexture("gfx/player.png"));
 	playerBullet.setDX(PLAYER_BULLET_SPEED);
 	playerBullet.setHealth(1);
-	playerBullet.setTexture(loadTexture("gfx/playerBullet.png"));
+	//playerBullet.setTexture(loadTexture("gfx/playerBullet.png"));
 	enemyBulletTexture = loadTexture("gfx/alienBullet.png");
 	enemyTexture = loadTexture("gfx/enemy.png");
 
@@ -504,11 +547,17 @@ void Game::initGame() {
 	titleFont = TTF_OpenFont("font/Ghost.ttf", 90);
 	Mix_PlayMusic(music, -1);
 
-	shipModel[0] = loadTexture("gfx/spaceship/player.png");
+	shipModel[0] = loadTexture("gfx/spaceship/white.png");
 	shipModel[1] = loadTexture("gfx/spaceship/yellow-white.png");
 	shipModel[2] = loadTexture("gfx/spaceship/blue.png");
 	shipModel[3] = loadTexture("gfx/spaceship/green.png");
 	shipModel[4] = loadTexture("gfx/spaceship/rship.png");
+
+	bulletModel[0] = loadTexture("gfx/bulletsprites/white.png");
+	bulletModel[1] = loadTexture("gfx/bulletsprites/yellow-white.png");
+	bulletModel[2] = loadTexture("gfx/bulletsprites/blue.png");
+	bulletModel[3] = loadTexture("gfx/bulletsprites/green.png");
+	bulletModel[4] = loadTexture("gfx/bulletsprites/rship.png");
 
 	//Button
 	int w, h;
@@ -561,7 +610,7 @@ void Game::initGame() {
 
 	playAgain = false;
 
-	pauseIcon = loadTexture("gfx/pauseIcon (2).png");
+	pauseIcon = loadTexture("gfx/pauseIcon.png");
 	SDL_Texture* guide = loadTexture("gfx/guide.png");
 
 	enemySpawnTimer = 60;
@@ -624,15 +673,34 @@ void Game::presentEntities() {
 	if (player.getHealth() > 0) {
 		player.move();
 		draw(player.getTexture(), player.getX(), player.getY());
+		int wP, hP;
+		if (player.Fire() == true && player.getReload() == 0) {
+			SDL_QueryTexture(player.getTexture(), NULL, NULL, &wP, &hP);
+			playerBullet.setX(player.getX() + wP / 2);
+			playerBullet.setY(player.getY() + hP / 2);
+			playerBullet.setType(1);
+			player.setReload(reloadRate);
+			Bullets.push_back(playerBullet);
+			if (player.getEnhance() > 0) {
+				playerBullet.setX(player.getX());
+				playerBullet.setY(player.getY());
+				Bullets.push_back(playerBullet);
+
+				playerBullet.setX(player.getX());
+				playerBullet.setY(player.getY() + hP);
+				Bullets.push_back(playerBullet);
+			}
+			Mix_PlayChannel(-1, bulletSound, 0);
+		}
 	}
 
-	int wP, hP;
+	/*int wP, hP;
 	if (player.Fire() == true && player.getReload() == 0) {
 		SDL_QueryTexture(player.getTexture(), NULL, NULL, &wP, &hP);
 		playerBullet.setX(player.getX() + wP / 2);
 		playerBullet.setY(player.getY() + hP / 2);
 		playerBullet.setType(1);
-		player.setReload(5);
+		player.setReload(reloadRate);
 		Bullets.push_back(playerBullet);
 		if (player.getEnhance() > 0) {
 			playerBullet.setX(player.getX());
@@ -644,7 +712,7 @@ void Game::presentEntities() {
 			Bullets.push_back(playerBullet);
 		}
 		Mix_PlayChannel(-1, bulletSound, 0);
-	}
+	}*/
 
 	//Spawn enemy
 	if (enemySpawnTimer == 0) {
@@ -679,7 +747,7 @@ void Game::presentEntities() {
 		if ((*i)->getX() <= -w) {
 			i = Enemies.erase(i);
 		}
-		else if (!(*i)->getHealth()) {
+		else if ((*i)->getHealth() <= 0) {
 			addExplosion((*i)->getX(), (*i)->getY(), 0);
 			score++;
 			Mix_PlayChannel(-1, explosionSound, 0);
@@ -746,7 +814,7 @@ void Game::presentEntities() {
 
 			if (i->Type() && detectCollision(i->getX(), i->getY(), wB, hB, (*j)->getX(), (*j)->getY(), wE, hE)) {
 				i->setHealth(0);
-				(*j)->setHealth((*j)->getHealth() - 1);
+				(*j)->setHealth((*j)->getHealth() - damageRate);
 				if (!(*j)->getHealth()) {
 					int num = rand() % 10 + 1;
 					if (num < 2) {
