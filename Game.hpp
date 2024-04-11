@@ -19,8 +19,15 @@ private:
 
 	SDL_Texture* shipModel[5];
 	SDL_Texture* bulletModel[5];
+
+	SDL_Texture* enemyBoss[3];
+	SDL_Texture* bossBullet[3];
+	int playerStunt = 0;
+	int playerDecay = 0;
+	int realHealth = 0;
 	int reloadRate;
 	int damageRate;
+	int fightingBoss;
 
 	Player player;
 	Entity playerBullet;
@@ -33,7 +40,6 @@ private:
 	int enemySpawnTimer;
 	std::vector <Enemy*> Enemies;
 
-	void prepareScene();
 	int backgroundX;
 
 	Effect explosion;
@@ -66,6 +72,7 @@ private:
 	SDL_Texture* guide;
 	bool playAgain;
 
+	//score
 	int score, highScore;
 	bool surpass = 0;
 	std::stringstream scoreText, hScoreText, LPText;
@@ -88,6 +95,7 @@ private:
 	SDL_Texture* loadTexture(std::string);
 	bool detectCollision(int, int, int, int, int, int, int, int);
 	void endScreen();
+	void prepareScene();
 	void Pause();
 public:
 	void start();

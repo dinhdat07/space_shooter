@@ -2,6 +2,7 @@
 #include "Enemy.hpp"
 
 Enemy::Enemy() {
+	type = 1;
 	reload = 20;
 	fire = 0;
 }
@@ -16,4 +17,10 @@ int Enemy::enemyFire() {
 }
 void Enemy::setFire(int fire) {
 	this->fire = fire;
+}
+int Enemy::getType() {
+	return type;
+}
+void Enemy::setType(int type) {
+	this->type = type;
 }

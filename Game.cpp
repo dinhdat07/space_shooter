@@ -159,15 +159,17 @@ bool Game::chooseSpaceship() {
 			drawRect(shipModel[pos], &src, SCREEN_WIDTH / 4 + 175, 200);
 		}
 		else {
-			string unlockRequire = "You have to reach at least " + to_string(pos * 25 + (pos - 1) * (pos - 1) * 5) + " high score to unlock this spaceship";
+			SDL_Rect srclock;
+			srclock.w = srclock.h = 200;
+			string unlockRequire = "Reach at least " + to_string(pos * 25 + (pos - 1) * (pos - 1) * 5) + " high score to unlock";
 			string currHS = "Your curent high score: " + to_string(highScore);
 			SDL_Surface* requireSf = TTF_RenderText_Solid(font, unlockRequire.c_str(), { 255, 0, 0, 0 });
 			SDL_Texture* requireTXT = SDL_CreateTextureFromSurface(app.renderer, requireSf);
 			SDL_Surface* currSf = TTF_RenderText_Solid(font, currHS.c_str(), { 255, 0, 0, 0 });
 			SDL_Texture* currTXT = SDL_CreateTextureFromSurface(app.renderer, currSf);
-			draw(requireTXT, SCREEN_WIDTH / 4 + 150, 550);
-			draw(currTXT, SCREEN_WIDTH / 4 + 150, 600);
-			drawRect(lock, &src, SCREEN_WIDTH / 4 + 175, 200);
+			draw(requireTXT, SCREEN_WIDTH / 4 + 60, 425);
+			draw(currTXT, SCREEN_WIDTH / 4 + 150, 470);
+			drawRect(lock, &srclock, SCREEN_WIDTH / 4 + 225, 200);
 		}
 
 
@@ -185,20 +187,22 @@ bool Game::chooseSpaceship() {
 
 			case SDL_KEYDOWN:
 				if (e.key.keysym.scancode == SDL_SCANCODE_SPACE) {
-					player.setTexture(shipModel[pos]);
-					playerBullet.setTexture(bulletModel[pos]);
+					if (pos == 0 || highScore >= pos * 25 + (pos - 1) * (pos - 1) * 5) {
+						player.setTexture(shipModel[pos]);
+						playerBullet.setTexture(bulletModel[pos]);
 
-					if (pos < 2) damageRate = 1;
-					else if (pos < 4) damageRate = 3;
-					else damageRate = 5;
+						if (pos < 2) damageRate = 1;
+						else if (pos < 4) damageRate = 3;
+						else damageRate = 5;
 
-					if (pos % 2 == 0) reloadRate = 5;
-					else reloadRate = 4;
-					if (pos == 4) reloadRate = 3;
+						if (pos % 2 == 0) reloadRate = 5;
+						else reloadRate = 4;
+						if (pos == 4) reloadRate = 3;
 
-					app.playing = true;
-					initPlayer();
-					return true;
+						app.playing = true;
+						initPlayer();
+						return true;
+					}
 				}
 				if (e.key.keysym.scancode == SDL_SCANCODE_RIGHT) {
 					pos = (pos + 1) % 5;
@@ -287,22 +291,22 @@ bool Game::chooseSpaceship() {
 				if (x >= playButton.getX() && x <= playButton.getX() + playButton.getW()
 					&& y >= playButton.getY() && y <= playButton.getY() + playButton.getH()) {
 					Mix_PlayChannel(-1, buttonSound, 0);
-					player.setTexture(shipModel[pos]);
-					playerBullet.setTexture(bulletModel[pos]);
+					if (pos == 0 || highScore >= pos * 25 + (pos - 1) * (pos - 1) * 5) {
+						player.setTexture(shipModel[pos]);
+						playerBullet.setTexture(bulletModel[pos]);
 
-					if (pos < 2) damageRate = 1;
-					else if (pos < 4) damageRate = 3;
-					else damageRate = 5;
-					
-					if (pos % 2 == 0) reloadRate = 5;
-					else reloadRate = 4;
-					if (pos == 4) reloadRate = 3;
+						if (pos < 2) damageRate = 1;
+						else if (pos < 4) damageRate = 3;
+						else damageRate = 5;
 
-					// 1 1 3 3 5
-					// 5 4 5 4 3
-					app.playing = true;
-					initPlayer();
-					return true;
+						if (pos % 2 == 0) reloadRate = 5;
+						else reloadRate = 4;
+						if (pos == 4) reloadRate = 3;
+
+						app.playing = true;
+						initPlayer();
+						return true;
+					}
 				}
 
 				break;
@@ -559,6 +563,14 @@ void Game::initGame() {
 	bulletModel[3] = loadTexture("gfx/bulletsprites/green.png");
 	bulletModel[4] = loadTexture("gfx/bulletsprites/rship.png");
 
+	enemyBoss[0] = loadTexture("gfx/spaceship/enemyBoss1.png");
+	enemyBoss[1] = loadTexture("gfx/spaceship/enemyBoss2.png");
+	enemyBoss[2] = loadTexture("gfx/spaceship/enemyBoss3.png");
+
+	bossBullet[0] = loadTexture("gfx/bulletsprites/enemyBoss1.png");
+	bossBullet[1] = loadTexture("gfx/bulletsprites/enemyBoss2.png");
+	bossBullet[2] = loadTexture("gfx/bulletsprites/enemyBoss3.png");
+
 	//Button
 	int w, h;
 	menuButton[0].setTexture(loadTexture("gfx/startButton.png"));
@@ -613,6 +625,7 @@ void Game::initGame() {
 	pauseIcon = loadTexture("gfx/pauseIcon.png");
 	SDL_Texture* guide = loadTexture("gfx/guide.png");
 
+	fightingBoss = 0;
 	enemySpawnTimer = 60;
 	score = 0;
 
@@ -670,15 +683,22 @@ void Game::Pause() {
 }
 
 void Game::presentEntities() {
+	if (playerDecay > 1) playerDecay--;
+	else if (playerDecay == 1) {
+		playerDecay--;
+		player.setHealth(realHealth);
+	}
 	if (player.getHealth() > 0) {
-		player.move();
+		if (playerStunt == 0) player.move();
+		else playerStunt--;
+
 		draw(player.getTexture(), player.getX(), player.getY());
 		int wP, hP;
 		if (player.Fire() == true && player.getReload() == 0) {
 			SDL_QueryTexture(player.getTexture(), NULL, NULL, &wP, &hP);
 			playerBullet.setX(player.getX() + wP / 2);
 			playerBullet.setY(player.getY() + hP / 2);
-			playerBullet.setType(1);
+			playerBullet.setType(-1);
 			player.setReload(reloadRate);
 			Bullets.push_back(playerBullet);
 			if (player.getEnhance() > 0) {
@@ -694,51 +714,47 @@ void Game::presentEntities() {
 		}
 	}
 
-	/*int wP, hP;
-	if (player.Fire() == true && player.getReload() == 0) {
-		SDL_QueryTexture(player.getTexture(), NULL, NULL, &wP, &hP);
-		playerBullet.setX(player.getX() + wP / 2);
-		playerBullet.setY(player.getY() + hP / 2);
-		playerBullet.setType(1);
-		player.setReload(reloadRate);
-		Bullets.push_back(playerBullet);
-		if (player.getEnhance() > 0) {
-			playerBullet.setX(player.getX());
-			playerBullet.setY(player.getY());
-			Bullets.push_back(playerBullet);
 
-			playerBullet.setX(player.getX());
-			playerBullet.setY(player.getY() + hP);
-			Bullets.push_back(playerBullet);
-		}
-		Mix_PlayChannel(-1, bulletSound, 0);
-	}*/
+	if (score % 50 == 0) fightingBoss = score/4;
 
 	//Spawn enemy
 	if (enemySpawnTimer == 0) {
-		enemy = new Enemy();
-		enemy->setTexture(enemyTexture);
-		int rate = rand() % 4;
-		if (rate < 2) {
-			enemy->setX(SCREEN_WIDTH - 80);
-			enemy->setDX(ENEMY_SPEED - rand() % 8);
-			enemy->setY(rand() % 400 + 100);
-		}
-		else {
-			enemy->setX(SCREEN_WIDTH / 2 + rand() % 200);
-			if (rate == 1) {
-				enemy->setDY(-ENEMY_SPEED + rand() % 8);
-				enemy->setY(-10);
+		if(fightingBoss == 0) {
+			enemy = new Enemy();
+			enemy->setTexture(enemyTexture);
+			int rate = rand() % 4;
+			if (rate < 2) {
+				enemy->setX(SCREEN_WIDTH - 80);
+				enemy->setDX(ENEMY_SPEED - rand() % 8);
+				enemy->setY(rand() % 400 + 100);
 			}
 			else {
-				enemy->setDY(ENEMY_SPEED - rand() % 8);
-				enemy->setY(690);
+				enemy->setX(SCREEN_WIDTH / 2 + rand() % 200);
+				if (rate == 1) {
+					enemy->setDY(-ENEMY_SPEED + rand() % 8);
+					enemy->setY(-10);
+				}
+				else {
+					enemy->setDY(ENEMY_SPEED - rand() % 8);
+					enemy->setY(690);
+				}
 			}
+			enemy->setHealth(5);
+			enemySpawnTimer = 60;
+			Enemies.push_back(enemy);
+		} else {
+			enemy = new Enemy();
+			enemy->setTexture(enemyBoss[(fightingBoss - 1) % 3]);
+			enemy->setX(SCREEN_WIDTH / 2 + rand() % 300);
+			enemy->setDY(-ENEMY_SPEED/3 + rand() % 3);
+			enemy->setY(-300);
+			enemy->setHealth(15);
+			enemy->setType(2);
+			enemySpawnTimer = -1; //no normal enemy will be spawn while fighting boss
+			Enemies.push_back(enemy);
 		}
-		enemy->setHealth(5);
-		enemySpawnTimer = 60;
-		Enemies.push_back(enemy);
 	}
+
 
 	//Checking removable fighter
 	for (auto i = Enemies.begin(); i != Enemies.end(); ) {
@@ -751,31 +767,52 @@ void Game::presentEntities() {
 			addExplosion((*i)->getX(), (*i)->getY(), 0);
 			score++;
 			Mix_PlayChannel(-1, explosionSound, 0);
+			if ((*i)->getType() == 2) {
+				fightingBoss = 0;
+				enemySpawnTimer = 80;
+			}
 			i = Enemies.erase(i);
 		}
 		else {
 			if ((*i)->getReload() > 0) (*i)->setReload((*i)->getReload() - 1);
 			else {
-				enemyBullet.setTexture(enemyBulletTexture);
-				enemyBullet.setX((*i)->getX() - w / 2);
-				enemyBullet.setY((*i)->getY() + h / 2);
-				float dx = player.getX() - enemyBullet.getX();
-				float dy = player.getY() - enemyBullet.getY();
-				float distance = sqrt(dx * dx + dy * dy);
-				dx /= distance;
-				dy /= distance;
-				enemyBullet.setDX(dx * (ENEMY_BULLET_SPEED + rand() % 8));
-				enemyBullet.setDY(dy * (ENEMY_BULLET_SPEED + rand() % 8));
-				enemyBullet.setHealth(1);
-				enemyBullet.setType(0);
-				(*i)->setReload(30 + rand() % 30);
-				Bullets.push_back(enemyBullet);
+				if ((*i)->getType() == 1) {
+					enemyBullet.setTexture(enemyBulletTexture);
+					enemyBullet.setX((*i)->getX() - w / 2);
+					enemyBullet.setY((*i)->getY() + h / 2);
+					float dx = player.getX() - enemyBullet.getX();
+					float dy = player.getY() - enemyBullet.getY();
+					float distance = sqrt(dx * dx + dy * dy);
+					dx /= distance;
+					dy /= distance;
+					enemyBullet.setDX(dx * (ENEMY_BULLET_SPEED + rand() % 8));
+					enemyBullet.setDY(dy * (ENEMY_BULLET_SPEED + rand() % 8));
+					enemyBullet.setHealth(1);
+					enemyBullet.setType(0);
+					(*i)->setReload(30 + rand() % 30);
+					Bullets.push_back(enemyBullet);
+				} else {
+					enemyBullet.setTexture(bossBullet[(fightingBoss-1) % 3]);
+					enemyBullet.setX((*i)->getX() - w / 2);
+					enemyBullet.setY((*i)->getY() + h / 2);
+					float dx = player.getX() - enemyBullet.getX();
+					float dy = player.getY() - enemyBullet.getY();
+					float distance = sqrt(dx * dx + dy * dy);
+					dx /= distance;
+					dy /= distance;
+					enemyBullet.setDX(dx * ENEMY_BULLET_SPEED);
+					enemyBullet.setDY(dy * ENEMY_BULLET_SPEED);
+					enemyBullet.setHealth(1);
+					enemyBullet.setType((fightingBoss - 1) % 3 + 1);
+					(*i)->setReload(30 + rand() % 30);
+					Bullets.push_back(enemyBullet);
+				}
 			}
 
 			(*i)->move();
-			if ( ((*i)->getY() < 0 && (*i)->getDY() < 0) || ((*i)->getY() > 640 && (*i)->getDY() > 0) ) {
+			if ( ((*i)->getY() < 0 && (*i)->getDY() < 0) || ((*i)->getY() + h > 680 && (*i)->getDY() > 0) ) {
 				(*i)->setDY(-(*i)->getDY());
-			}
+			} // for enemy move vertically
 
 			draw((*i)->getTexture(), (*i)->getX(), (*i)->getY());
 			i++;
@@ -800,19 +837,55 @@ void Game::presentEntities() {
 		int wB, hB, wP, hP;
 		SDL_QueryTexture(i->getTexture(), NULL, NULL, &wB, &hB);
 		SDL_QueryTexture(player.getTexture(), NULL, NULL, &wP, &hP);
-		if (!i->Type() && detectCollision(i->getX(), i->getY(), wB, hB, player.getX(), player.getY(), wP, hP)) {
-			i->setHealth(0);
-			player.setHealth(player.getHealth() - 2);
-			if (player.getHealth() <= 0) {
-				addExplosion(player.getX(), player.getY(), 1);
-				Mix_PlayChannel(-1, playerExplosionSound, 0);
+		if (detectCollision(i->getX(), i->getY(), wB, hB, player.getX(), player.getY(), wP, hP)) {
+			switch (i->Type()) {
+			case 0:
+				i->setHealth(0);
+				player.setHealth(player.getHealth() - 2);
+				if (player.getHealth() <= 0) {
+					addExplosion(player.getX(), player.getY(), 1);
+					Mix_PlayChannel(-1, playerExplosionSound, 0);
+				}
+				break;
+			case 1:
+				i->setHealth(0);
+				player.setHealth(player.getHealth() - 6);
+				if (player.getHealth() <= 0) {
+					addExplosion(player.getX(), player.getY(), 1);
+					Mix_PlayChannel(-1, playerExplosionSound, 0);
+				}
+				break;
+			case 2:
+				i->setHealth(0);
+				player.setHealth(player.getHealth() - 2);
+				if(playerStunt == 0) playerStunt = 60;
+				if (player.getHealth() <= 0) {
+					addExplosion(player.getX(), player.getY(), 1);
+					Mix_PlayChannel(-1, playerExplosionSound, 0);
+				}
+				break;
+			case 3:
+				i->setHealth(0);
+				if (playerDecay == 0) {
+					realHealth = player.getHealth();
+					player.setHealth(1);
+					playerDecay = 180;
+				}
+				else {
+					player.setHealth(0);
+				}
+				if (player.getHealth() <= 0) {
+					addExplosion(player.getX(), player.getY(), 1);
+					Mix_PlayChannel(-1, playerExplosionSound, 0);
+				}
+				break;
 			}
 		}
 		for (auto j = Enemies.begin(); j != Enemies.end(); j++) {
 			int wE, hE;
 			SDL_QueryTexture((*j)->getTexture(), NULL, NULL, &wE, &hE);
 
-			if (i->Type() && detectCollision(i->getX(), i->getY(), wB, hB, (*j)->getX(), (*j)->getY(), wE, hE)) {
+			if (i->Type() == -1 && detectCollision(i->getX(), i->getY(), wB, hB, (*j)->getX(), (*j)->getY(), wE, hE)) {
 				i->setHealth(0);
 				(*j)->setHealth((*j)->getHealth() - damageRate);
 				if (!(*j)->getHealth()) {
@@ -898,6 +971,7 @@ void Game::HUD() {
 	scoreText << "Score : " << score;
 	hScoreText << "High Score : " << highScore;
 	LPText << "Life Points: " << player.getHealth();
+	if (playerDecay) LPText << " (DECAY)";
 
 	SDL_Surface* scoreSurface = TTF_RenderText_Solid(font, scoreText.str().c_str(), { 255, 255, 255, 0 });
 	SDL_Texture* scoreTXT = SDL_CreateTextureFromSurface(app.renderer, scoreSurface);
@@ -906,11 +980,19 @@ void Game::HUD() {
 	SDL_Texture* hsTXT = SDL_CreateTextureFromSurface(app.renderer, hsSurface);
 
 	SDL_Surface* LPSurface = TTF_RenderText_Solid(font, LPText.str().c_str(), { 22, 184, 17, 0 });
+	if(playerDecay) LPSurface = TTF_RenderText_Solid(font, LPText.str().c_str(), { 255, 99, 71, 0 });
 	SDL_Texture* LPTXT = SDL_CreateTextureFromSurface(app.renderer, LPSurface);
 
 	draw(scoreTXT, 20, 20);
 	draw(hsTXT, 20, 60);
 	draw(LPTXT, 20, 100);
+
+	if (playerStunt) {
+		string stunt = "STUNT";
+		SDL_Surface* stuntSf = TTF_RenderText_Solid(font, stunt.c_str(), { 255, 200, 0, 0 });
+		SDL_Texture* stuntTXT = SDL_CreateTextureFromSurface(app.renderer, stuntSf);
+		draw(stuntTXT, player.getX(), player.getY() - 25);
+	}
 }
 
 void Game::prepareScene() {
@@ -974,6 +1056,10 @@ void Game::presentScene() {
 		Bullets.clear();
 		Enemies.clear();
 		powerUps.clear();
+		fightingBoss = 0;
+		playerStunt = 0;
+		playerDecay = 0;
+		realHealth = 0;
 		app.playing = false;
 	}
 
