@@ -6,6 +6,7 @@ private:
 	bool up, down, left, right, fire;
 	int reload;
 	int enhance;
+	int RGBTimer;
 public:
 	Player();
 	void move();
@@ -17,4 +18,6 @@ public:
 	int getReload();
 	void setReload(int);
 	void resetInput();
+	int getRGBTimer();
+	void setRGBTimer(int);
 };

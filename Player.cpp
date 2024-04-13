@@ -3,6 +3,7 @@
 
 Player::Player() {
 	up = left = down = right = fire = reload = enhance = 0;
+	RGBTimer = 0;
 }
 
 void Player::move() {
@@ -99,9 +100,16 @@ void Player::keyUp(SDL_KeyboardEvent* event) {
 	}
 }
 
+int Player::getRGBTimer() {
+	return this->RGBTimer;
+}
+void Player::setRGBTimer(int time) {
+	this->RGBTimer = time;
+}
+
 
 void Player::resetInput() {
-	left = up = right = down = fire =  enhance = false;
+	left = up = right = down = fire =  enhance = RGBTimer = false;
 }
 
 

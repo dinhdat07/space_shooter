@@ -22,6 +22,7 @@ private:
 
 	SDL_Texture* enemyBoss[3];
 	SDL_Texture* bossBullet[3];
+	double bossHP, currbossHP;
 	int playerStunt = 0;
 	int playerDecay = 0;
 	int realHealth = 0;

@@ -688,6 +688,10 @@ void Game::presentEntities() {
 		playerDecay--;
 		player.setHealth(realHealth);
 	}
+
+	if (player.getRGBTimer() > 0) player.setRGBTimer(player.getRGBTimer() - 1);
+	else SDL_SetTextureColorMod(player.getTexture(), 255, 255, 255);
+
 	if (player.getHealth() > 0) {
 		if (playerStunt == 0) player.move();
 		else playerStunt--;
@@ -715,13 +719,14 @@ void Game::presentEntities() {
 	}
 
 
-	if (score % 50 == 0) fightingBoss = score/4;
+	if (score % 5 == 0) fightingBoss = score/5;
 
 	//Spawn enemy
 	if (enemySpawnTimer == 0) {
 		if(fightingBoss == 0) {
 			enemy = new Enemy();
 			enemy->setTexture(enemyTexture);
+			//enemy->setTexture(loadTexture("gfx/enemy.png"));
 			int rate = rand() % 4;
 			if (rate < 2) {
 				enemy->setX(SCREEN_WIDTH - 80);
@@ -748,7 +753,8 @@ void Game::presentEntities() {
 			enemy->setX(SCREEN_WIDTH / 2 + rand() % 300);
 			enemy->setDY(-ENEMY_SPEED/3 + rand() % 3);
 			enemy->setY(-300);
-			enemy->setHealth(15);
+			enemy->setHealth(50);
+			bossHP = enemy->getHealth();
 			enemy->setType(2);
 			enemySpawnTimer = -1; //no normal enemy will be spawn while fighting boss
 			Enemies.push_back(enemy);
@@ -774,6 +780,8 @@ void Game::presentEntities() {
 			i = Enemies.erase(i);
 		}
 		else {
+			if ((*i)->getRGBTimer() > 0) (*i)->setRGBTimer((*i)->getRGBTimer() - 1);
+			else SDL_SetTextureColorMod((*i)->getTexture(), 255, 255, 255);
 			if ((*i)->getReload() > 0) (*i)->setReload((*i)->getReload() - 1);
 			else {
 				if ((*i)->getType() == 1) {
@@ -810,9 +818,9 @@ void Game::presentEntities() {
 			}
 
 			(*i)->move();
-			if ( ((*i)->getY() < 0 && (*i)->getDY() < 0) || ((*i)->getY() + h > 680 && (*i)->getDY() > 0) ) {
+			if ( ((*i)->getY() < 0 && (*i)->getDY() < 0) || ((*i)->getY() + h > SCREEN_HEIGHT && (*i)->getDY() > 0) ) {
 				(*i)->setDY(-(*i)->getDY());
-			} // for enemy move vertically
+			} // for enemy move vertically 
 
 			draw((*i)->getTexture(), (*i)->getX(), (*i)->getY());
 			i++;
@@ -822,7 +830,9 @@ void Game::presentEntities() {
 
 	//Checking removable bullets
 	for (auto i = Bullets.begin(); i != Bullets.end(); ) {
-		if (i->getX() < 0 || i->getX() > SCREEN_WIDTH || i->getY() < 0 || i->getY() > SCREEN_HEIGHT || !i->getHealth()) {
+		int w, h;
+		SDL_QueryTexture(i->getTexture(), NULL, NULL, &w, &h);
+		if (i->getX() <= -w || i->getX() >= SCREEN_WIDTH || i->getY() <= -h || i->getY() > SCREEN_HEIGHT || !i->getHealth()) {
 			i = Bullets.erase(i);
 		}
 		else {
@@ -840,6 +850,8 @@ void Game::presentEntities() {
 		if (detectCollision(i->getX(), i->getY(), wB, hB, player.getX(), player.getY(), wP, hP)) {
 			switch (i->Type()) {
 			case 0:
+				player.setRGBTimer(10);
+				SDL_SetTextureColorMod(player.getTexture(), 255, 0, 0);
 				i->setHealth(0);
 				player.setHealth(player.getHealth() - 2);
 				if (player.getHealth() <= 0) {
@@ -847,7 +859,9 @@ void Game::presentEntities() {
 					Mix_PlayChannel(-1, playerExplosionSound, 0);
 				}
 				break;
-			case 1:
+			case 3:
+				player.setRGBTimer(10);
+				SDL_SetTextureColorMod(player.getTexture(), 255, 0, 0);
 				i->setHealth(0);
 				player.setHealth(player.getHealth() - 6);
 				if (player.getHealth() <= 0) {
@@ -856,6 +870,8 @@ void Game::presentEntities() {
 				}
 				break;
 			case 2:
+				player.setRGBTimer(60);
+				SDL_SetTextureColorMod(player.getTexture(), 255, 255, 51);
 				i->setHealth(0);
 				player.setHealth(player.getHealth() - 2);
 				if(playerStunt == 0) playerStunt = 60;
@@ -864,7 +880,9 @@ void Game::presentEntities() {
 					Mix_PlayChannel(-1, playerExplosionSound, 0);
 				}
 				break;
-			case 3:
+			case 1:
+				player.setRGBTimer(180);
+				SDL_SetTextureColorMod(player.getTexture(), 147, 112, 219);
 				i->setHealth(0);
 				if (playerDecay == 0) {
 					realHealth = player.getHealth();
@@ -881,11 +899,14 @@ void Game::presentEntities() {
 				break;
 			}
 		}
+
 		for (auto j = Enemies.begin(); j != Enemies.end(); j++) {
 			int wE, hE;
 			SDL_QueryTexture((*j)->getTexture(), NULL, NULL, &wE, &hE);
 
 			if (i->Type() == -1 && detectCollision(i->getX(), i->getY(), wB, hB, (*j)->getX(), (*j)->getY(), wE, hE)) {
+				(*j)->setRGBTimer(10);
+				SDL_SetTextureColorMod((*j)->getTexture(), 255, 0, 0);
 				i->setHealth(0);
 				(*j)->setHealth((*j)->getHealth() - damageRate);
 				if (!(*j)->getHealth()) {
@@ -993,12 +1014,30 @@ void Game::HUD() {
 		SDL_Texture* stuntTXT = SDL_CreateTextureFromSurface(app.renderer, stuntSf);
 		draw(stuntTXT, player.getX(), player.getY() - 25);
 	}
+
+	if (fightingBoss) {
+		SDL_Texture* healthbar = loadTexture("gfx/healthbar.png");
+		SDL_Texture* bar = loadTexture("gfx/bar.png");
+
+		currbossHP = bossHP;
+		for (auto i = Enemies.begin(); i != Enemies.end(); i++) {
+			if ((*i)->getType() == 2) currbossHP = (*i)->getHealth();
+			break;
+		}
+
+		SDL_Rect rect{ 500, 500, 400, 22};
+		SDL_Rect rect2{ 502, 502, currbossHP/bossHP * 392, 18 };
+
+		drawRect(bar, &rect, 850, 650);
+		drawRect(healthbar, &rect2, 854, 652);
+	}
 }
 
 void Game::prepareScene() {
 	SDL_SetRenderDrawColor(app.renderer, 0, 0, 0, 255);
 	SDL_RenderClear(app.renderer);
 }
+
 
 void Game::addExplosion(int x, int y, int type) {
 	explosion.setTexture(explosionTexture);
@@ -1026,6 +1065,8 @@ void Game::addExplosion(int x, int y, int type) {
 	}
 	Explosion.push_back(tmp);
 }
+
+
 
 void Game::addPowerUp(int x, int y, int type) {
 	if(type == 1) powerup.setTexture(loadTexture("gfx/LP.png"));
@@ -1056,6 +1097,8 @@ void Game::presentScene() {
 		Bullets.clear();
 		Enemies.clear();
 		powerUps.clear();
+		//SDL_SetTextureColorMod(player.getTexture(), 255, 255, 255);
+		//SDL_SetTextureAlphaMod(player.getTexture(), 255);
 		fightingBoss = 0;
 		playerStunt = 0;
 		playerDecay = 0;

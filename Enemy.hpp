@@ -5,6 +5,7 @@ class Enemy :public Entity {
 private:
 	int reload, fire;
 	int type;
+	int RGBTimer;
 public:
 	Enemy();
 	int getReload();
@@ -13,5 +14,7 @@ public:
 	void setFire(int);
 	int getType();
 	void setType(int);
+	int getRGBTimer();
+	void setRGBTimer(int);
 
 };
