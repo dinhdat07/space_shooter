@@ -1,11 +1,10 @@
-﻿  Enemy.cpp
-  Game.cpp
+﻿  Game.cpp
+E:\CODING\MyGame\SpaceShooter\src\Game.cpp(829,15): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+E:\CODING\MyGame\SpaceShooter\src\Game.cpp(830,15): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+E:\CODING\MyGame\SpaceShooter\src\Game.cpp(844,15): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+E:\CODING\MyGame\SpaceShooter\src\Game.cpp(845,15): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+E:\CODING\MyGame\SpaceShooter\src\Game.cpp(1093,47): warning C4838: conversion from 'double' to 'int' requires a narrowing conversion
+E:\CODING\MyGame\SpaceShooter\src\Game.cpp(1093,47): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
   main.cpp
-E:\CODING\MyGame\SpaceShooter\src\Game.cpp(796,15): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-E:\CODING\MyGame\SpaceShooter\src\Game.cpp(797,15): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-E:\CODING\MyGame\SpaceShooter\src\Game.cpp(811,15): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-E:\CODING\MyGame\SpaceShooter\src\Game.cpp(812,15): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-E:\CODING\MyGame\SpaceShooter\src\Game.cpp(1049,47): warning C4838: conversion from 'double' to 'int' requires a narrowing conversion
-E:\CODING\MyGame\SpaceShooter\src\Game.cpp(1049,47): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
   Generating Code...
   SpaceShooter.vcxproj -> E:\CODING\MyGame\SpaceShooter\x64\Debug\SpaceShooter.exe

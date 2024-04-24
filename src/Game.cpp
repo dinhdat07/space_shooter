@@ -29,6 +29,183 @@ void Game::start() {
 	}
 }
 
+
+void Game::initGame() {
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
+		cout << "Could not initialize SDL: " << SDL_GetError() << endl;
+		exit(-1);
+	}
+
+	app.window = SDL_CreateWindow("Space Shooter", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+	if (!app.window) {
+		cout << "Could not create window : " << SDL_GetError() << endl;
+		exit(-1);
+	}
+	SDL_Surface* sf = IMG_Load("./resources/gfx/other/logo.png");
+	SDL_SetWindowIcon(app.window, sf);
+
+	app.renderer = SDL_CreateRenderer(app.window, -1, SDL_RENDERER_ACCELERATED);
+	if (!app.renderer) {
+		cout << "Could not create renderer : " << SDL_GetError() << endl;
+		exit(-1);
+	}
+
+	if (!IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG)) {
+		cout << "Could not initialize SDL Image : " << SDL_GetError() << endl;
+		exit(-1);
+	}
+
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+		cout << "Could not initialize SDL Mixer : " << SDL_GetError() << endl;
+		exit(-1);
+	}
+
+	if (TTF_Init() == -1) {
+		cout << "Could not initialize SDL TTF : " << SDL_GetError() << endl;
+		exit(-1);
+	}
+
+	Mix_AllocateChannels(8);
+
+	backgroundX = 0;
+
+	app.playing = false;
+	app.background = loadTexture("./resources/gfx/other/background.png");
+
+	//player.setTexture(loadTexture("gfx/player.png"));
+	playerBullet.setDX(PLAYER_BULLET_SPEED);
+	playerBullet.setHealth(1);
+	//playerBullet.setTexture(loadTexture("gfx/playerBullet.png"));
+	enemyBulletTexture = loadTexture("./resources/gfx/bulletsprites/alienBullet.png");
+	enemyTexture = loadTexture("./resources/gfx/spaceship/enemy.png");
+
+	music = Mix_LoadMUS("./resources/music/backgroundMusic.ogg");
+	explosionSound = Mix_LoadWAV("./resources/sound/enemyExplosion.ogg");
+	playerExplosionSound = Mix_LoadWAV("./resources/sound/explosionSound.wav");
+	buttonSound = Mix_LoadWAV("./resources/sound/buttonSound.mp3");
+	bulletSound = Mix_LoadWAV("./resources/sound/bulletSound.ogg");
+	powerupSound = Mix_LoadWAV("./resources/sound/earnPowerUp.ogg");
+
+	explosionTexture = loadTexture("./resources/gfx/other/explosion.png");
+	font = TTF_OpenFont("./resources/font/Goldeneye.ttf", 28);
+	titleFont = TTF_OpenFont("./resources/font/Ghost.ttf", 90);
+	Mix_PlayMusic(music, -1);
+
+	shipModel[0] = loadTexture("./resources/gfx/spaceship/white.png");
+	shipModel[1] = loadTexture("./resources/gfx/spaceship/yellow-white.png");
+	shipModel[2] = loadTexture("./resources/gfx/spaceship/blue.png");
+	shipModel[3] = loadTexture("./resources/gfx/spaceship/green.png");
+	shipModel[4] = loadTexture("./resources/gfx/spaceship/rship.png");
+
+	bulletModel[0] = loadTexture("./resources/gfx/bulletsprites/white.png");
+	bulletModel[1] = loadTexture("./resources/gfx/bulletsprites/yellow-white.png");
+	bulletModel[2] = loadTexture("./resources/gfx/bulletsprites/blue.png");
+	bulletModel[3] = loadTexture("./resources/gfx/bulletsprites/green.png");
+	bulletModel[4] = loadTexture("./resources/gfx/bulletsprites/rship.png");
+
+	enemyBoss[0] = loadTexture("./resources/gfx/spaceship/enemyBoss1.png");
+	enemyBoss[1] = loadTexture("./resources/gfx/spaceship/enemyBoss2.png");
+	enemyBoss[2] = loadTexture("./resources/gfx/spaceship/enemyBoss3.png");
+
+	bossBullet[0] = loadTexture("./resources/gfx/bulletsprites/enemyBoss1.png");
+	bossBullet[1] = loadTexture("./resources/gfx/bulletsprites/enemyBoss2.png");
+	bossBullet[2] = loadTexture("./resources/gfx/bulletsprites/enemyBoss3.png");
+
+	//Button
+	Buttons[0] = loadTexture("./resources/gfx/gui/startButton.png");
+	Buttons[2] = loadTexture("./resources/gfx/gui/guideButton.png");
+	Buttons[4] = loadTexture("./resources/gfx/gui/exitButton.png");
+	Buttons[6] = loadTexture("./resources/gfx/gui/left.png");
+	Buttons[8] = loadTexture("./resources/gfx/gui/right.png");
+	Buttons[10] = loadTexture("./resources/gfx/gui/backButton.png");
+	Buttons[12] = loadTexture("./resources/gfx/gui/menuButton.png");
+	Buttons[14] = loadTexture("./resources/gfx/gui/playButton.png");
+	Buttons[16] = loadTexture("./resources/gfx/gui/play.png");
+
+
+	Buttons[1] = loadTexture("./resources/gfx/gui/startHoverButton.png");
+	Buttons[3] = loadTexture("./resources/gfx/gui/guideHoverButton.png");
+	Buttons[5] = loadTexture("./resources/gfx/gui/exitHoverButton.png");
+	Buttons[7] = loadTexture("./resources/gfx/gui/hoverleft.png");
+	Buttons[9] = loadTexture("./resources/gfx/gui/hoverright.png");
+	Buttons[11] = loadTexture("./resources/gfx/gui/backHoverButton.png");
+	Buttons[13] = loadTexture("./resources/gfx/gui/menuHoverButton.png");
+	Buttons[15] = loadTexture("./resources/gfx/gui/playHoverButton.png");
+	Buttons[17] = loadTexture("./resources/gfx/gui/hoverplay.png");
+
+	int w, h;
+	menuButton[0].setTexture(Buttons[0]);
+	menuButton[1].setTexture(Buttons[2]);
+	menuButton[2].setTexture(Buttons[4]);
+	for (int i = 0; i < 3; i++) {
+		menuButton[i].setX(475);
+		menuButton[i].setY(SCREEN_WIDTH / 4 + 25);
+		SDL_QueryTexture(menuButton[i].getTexture(), NULL, NULL, &w, &h);
+		menuButton[i].setW(w);
+		menuButton[i].setH(h);
+		if (i) {
+			menuButton[i].setY(menuButton[i - 1].getY() + menuButton[i - 1].getH() + 25);
+		}
+	}
+
+	arrowButton[0].setTexture(Buttons[6]);
+	arrowButton[1].setTexture(Buttons[8]);
+	for (int i = 0; i < 2; i++) {
+		arrowButton[i].setX(300);
+		arrowButton[i].setY(300);
+		SDL_QueryTexture(menuButton[i].getTexture(), NULL, NULL, &w, &h);
+		arrowButton[i].setW(w);
+		arrowButton[i].setH(h);
+		if (i) {
+			arrowButton[i].setX(arrowButton[i - 1].getX() + 575);
+		}
+	}
+
+	backButton.setY(600);
+	backButton.setX(450);
+	backButton.setTexture(Buttons[10]);
+	SDL_QueryTexture(backButton.getTexture(), NULL, NULL, &w, &h);
+	backButton.setW(w);
+	backButton.setH(h);
+
+	endButton[0].setTexture(Buttons[12]);
+	endButton[1].setTexture(Buttons[14]);
+	for (int i = 0; i < 2; i++) {
+		endButton[i].setX(SCREEN_WIDTH / 4 + 25);
+		endButton[i].setY(500);
+		SDL_QueryTexture(endButton[i].getTexture(), NULL, NULL, &w, &h);
+		endButton[i].setW(w);
+		endButton[i].setH(h);
+		if (i) {
+			endButton[i].setX(endButton[i - 1].getX() + endButton[i - 1].getW() + 50);
+		}
+	}
+
+	playAgain = false;
+
+	pauseIcon = loadTexture("./resources/gfx/other/pauseIcon.png");
+	lock = loadTexture("./resources/gfx/other/lock.png");
+	guide = loadTexture("./resources/gfx/other/guide.png");
+	healthbar = loadTexture("./resources/gfx/other/healthbar.png");
+	bar = loadTexture("./resources/gfx/other/bar.png");
+	powerUp1 = loadTexture("./resources/gfx/other/LP.png");
+	powerUp2 = loadTexture("./resources/gfx/other/enhanceATK.png");
+	srclock.w = srclock.h = 200;
+
+
+	fightingBoss = 0;
+	enemySpawnTimer = 60;
+	score = 0;
+
+	ifstream fin("./data/scores.txt");
+	if (!fin.is_open()) {
+		std::cout << "Can't open file scores.txt";
+		exit(-1);
+	}
+	fin >> highScore;
+	fin.close();
+}
+
 void Game::titleScreen() {
 	SDL_Event e;
 	string title1 = "Space ", title2 = "Shooter";
@@ -82,16 +259,16 @@ void Game::titleScreen() {
 						&& y >= menuButton[i].getY() && y <= menuButton[i].getY() + menuButton[i].getH()) {
 						if (!menuButton[i].isHovered()) {
 							menuButton[i].setHovered(true);
-							if (i == 0) menuButton[i].setTexture(loadTexture("./resources/gfx/startHoverButton.png"));
-							if (i == 1) menuButton[i].setTexture(loadTexture("./resources/gfx/guideHoverButton.png"));
-							if (i == 2) menuButton[i].setTexture(loadTexture("./resources/gfx/exitHoverButton.png"));
+							if (i == 0) menuButton[i].setTexture(Buttons[1]);
+							if (i == 1) menuButton[i].setTexture(Buttons[3]);
+							if (i == 2) menuButton[i].setTexture(Buttons[5]);
 						}
 					}
 					else if (menuButton[i].isHovered()) {
 						menuButton[i].setHovered(false);
-						if (i == 0) menuButton[i].setTexture(loadTexture("./resources/gfx/startButton.png"));
-						if (i == 1) menuButton[i].setTexture(loadTexture("./resources/gfx/guideButton.png"));
-						if (i == 2) menuButton[i].setTexture(loadTexture("./resources/gfx/exitButton.png"));
+						if (i == 0) menuButton[i].setTexture(Buttons[0]);
+						if (i == 1) menuButton[i].setTexture(Buttons[2]);
+						if (i == 2) menuButton[i].setTexture(Buttons[4]);
 					}
 				}
 				break;
@@ -126,14 +303,14 @@ bool Game::chooseSpaceship() {
 	int w, h;
 	backButton.setY(550);
 	backButton.setX(350);
-	backButton.setTexture(loadTexture("./resources/gfx/backButton.png"));
+	backButton.setTexture(Buttons[10]);
 	SDL_QueryTexture(backButton.getTexture(), NULL, NULL, &w, &h);
 	backButton.setW(w);
 	backButton.setH(h);
 
 	playButton.setY(550);
 	playButton.setX(350 + backButton.getW() + 50);
-	playButton.setTexture(loadTexture("./resources/gfx/play.png"));
+	playButton.setTexture(Buttons[16]);
 	SDL_QueryTexture(playButton.getTexture(), NULL, NULL, &w, &h);
 	playButton.setW(w);
 	playButton.setH(h);
@@ -141,9 +318,6 @@ bool Game::chooseSpaceship() {
 	string instruct = "Choose your spaceshooter";
 	SDL_Surface* insSf = TTF_RenderText_Solid(font, instruct.c_str(), { 255, 255, 255, 0 });
 	SDL_Texture* insTXT = SDL_CreateTextureFromSurface(app.renderer, insSf);
-
-	SDL_Texture* lock = loadTexture("./resources/gfx/lock.png");
-
 
 	int pos = 0;
 	SDL_Rect src;
@@ -159,17 +333,22 @@ bool Game::chooseSpaceship() {
 			drawRect(shipModel[pos], &src, SCREEN_WIDTH / 4 + 175, 200);
 		}
 		else {
-			SDL_Rect srclock;
-			srclock.w = srclock.h = 200;
 			string unlockRequire = "Reach at least " + to_string(pos * 25 + (pos - 1) * (pos - 1) * 5) + " high score to unlock";
 			string currHS = "Your curent high score: " + to_string(highScore);
+
 			SDL_Surface* requireSf = TTF_RenderText_Solid(font, unlockRequire.c_str(), { 255, 0, 0, 0 });
-			SDL_Texture* requireTXT = SDL_CreateTextureFromSurface(app.renderer, requireSf);
+			SDL_DestroyTexture(requireTXT);
+			requireTXT = SDL_CreateTextureFromSurface(app.renderer, requireSf);
+			SDL_FreeSurface(requireSf);
+
 			SDL_Surface* currSf = TTF_RenderText_Solid(font, currHS.c_str(), { 255, 0, 0, 0 });
-			SDL_Texture* currTXT = SDL_CreateTextureFromSurface(app.renderer, currSf);
+			SDL_DestroyTexture(currTXT);
+			currTXT = SDL_CreateTextureFromSurface(app.renderer, currSf);
+			SDL_FreeSurface(currSf);
+
 			draw(requireTXT, SCREEN_WIDTH / 4 + 60, 425);
 			draw(currTXT, SCREEN_WIDTH / 4 + 150, 470);
-			drawRect(lock, &srclock, SCREEN_WIDTH / 4 + 225, 200);
+			drawRect(lock, &srclock, SCREEN_WIDTH / 4 + 225, 200); 
 		}
 
 
@@ -202,9 +381,6 @@ bool Game::chooseSpaceship() {
 						app.playing = true;
 						initPlayer();
 						return true;
-
-						//1 1 3 3 5
-						//5 4 5 4 3
 					}
 				}
 				if (e.key.keysym.scancode == SDL_SCANCODE_RIGHT) {
@@ -234,14 +410,14 @@ bool Game::chooseSpaceship() {
 						&& y >= arrowButton[i].getY() && y <= arrowButton[i].getY() + arrowButton[i].getH()) {
 						if (!arrowButton[i].isHovered()) {
 							arrowButton[i].setHovered(true);
-							if (i == 0) arrowButton[i].setTexture(loadTexture("./resources/gfx/arrow/hoverleft.png"));
-							if (i == 1) arrowButton[i].setTexture(loadTexture("./resources/gfx/arrow/hoverright.png"));
+							if (i == 0) arrowButton[i].setTexture(Buttons[7]);
+							if (i == 1) arrowButton[i].setTexture(Buttons[9]);
 						}
 					}
 					else if (arrowButton[i].isHovered()) {
 						arrowButton[i].setHovered(false);
-						if (i == 0) arrowButton[i].setTexture(loadTexture("./resources/gfx/arrow/left.png"));
-						if (i == 1) arrowButton[i].setTexture(loadTexture("./resources/gfx/arrow/right.png"));
+						if (i == 0) arrowButton[i].setTexture(Buttons[6]);
+						if (i == 1) arrowButton[i].setTexture(Buttons[8]);
 					}
 				}
 
@@ -249,24 +425,24 @@ bool Game::chooseSpaceship() {
 					&& y >= backButton.getY() && y <= backButton.getY() + backButton.getH()) {
 					if (!backButton.isHovered()) {
 						backButton.setHovered(true);
-						backButton.setTexture(loadTexture("./resources/gfx/backHoverButton.png"));
+						backButton.setTexture(Buttons[11]);
 					}
 				}
 				else if (backButton.isHovered()) {
 					backButton.setHovered(false);
-					backButton.setTexture(loadTexture("./resources/gfx/backButton.png"));
+					backButton.setTexture(Buttons[10]);
 				}
 
 				if (x >= playButton.getX() && x <= playButton.getX() + playButton.getW()
 					&& y >= playButton.getY() && y <= playButton.getY() + playButton.getH()) {
 					if (!playButton.isHovered()) {
 						playButton.setHovered(true);
-						playButton.setTexture(loadTexture("./resources/gfx/hoverplay.png"));
+						playButton.setTexture(Buttons[17]);
 					}
 				}
 				else if (playButton.isHovered()) {
 					playButton.setHovered(false);
-					playButton.setTexture(loadTexture("./resources/gfx/play.png"));
+					playButton.setTexture(Buttons[16]);
 				}
 				break;
 
@@ -323,13 +499,12 @@ void Game::Guide() {
 	SDL_Event e;
 	backButton.setY(600);
 	backButton.setX(450);
-	backButton.setTexture(loadTexture("./resources/gfx/backButton.png"));
+	backButton.setTexture(Buttons[10]);
 	int w, h;
 	SDL_QueryTexture(backButton.getTexture(), NULL, NULL, &w, &h);
 	backButton.setW(w);
 	backButton.setH(h);
 
-	SDL_Texture* guide = loadTexture("./resources/gfx/guide.png");
 
 	int x, y;
 	while (true) {
@@ -362,11 +537,11 @@ void Game::Guide() {
 				&& y >= backButton.getY() && y <= backButton.getY() + backButton.getH()) {
 					if (!backButton.isHovered()) {
 						backButton.setHovered(true);
-						backButton.setTexture(loadTexture("./resources/gfx/backHoverButton.png"));
+						backButton.setTexture(Buttons[11]);
 					}
 				} else if (backButton.isHovered()) {
 					backButton.setHovered(false);
-					backButton.setTexture(loadTexture("./resources/gfx/backButton.png"));
+					backButton.setTexture(Buttons[10]);
 				}
 				break;
 
@@ -455,14 +630,14 @@ void Game::endScreen() {
 							&& y >= endButton[i].getY() && y <= endButton[i].getY() + endButton[i].getH()) {
 							if (!endButton[i].isHovered()) {
 								endButton[i].setHovered(true);
-								if (i == 0) endButton[i].setTexture(loadTexture("./resources/gfx/menuHoverButton.png"));
-								if (i == 1) endButton[i].setTexture(loadTexture("./resources/gfx/playHoverButton.png"));
+								if (i == 0) endButton[i].setTexture(Buttons[13]);
+								if (i == 1) endButton[i].setTexture(Buttons[15]);
 							}
 						}
 						else if (endButton[i].isHovered()) {
 							endButton[i].setHovered(false);
-							if (i == 0) endButton[i].setTexture(loadTexture("./resources/gfx/menuButton.png"));
-							if (i == 1) endButton[i].setTexture(loadTexture("./resources/gfx/playButton.png"));
+							if (i == 0) endButton[i].setTexture(Buttons[12]);
+							if (i == 1) endButton[i].setTexture(Buttons[14]);
 						}
 					}
 					break;
@@ -495,151 +670,7 @@ void Game::endScreen() {
 
 }
 
-void Game::initGame() {
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
-		cout << "Could not initialize SDL: " << SDL_GetError() << endl;
-		exit(-1);
-	}
 
-	app.window = SDL_CreateWindow("Space Shooter", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-	if (!app.window) {
-		cout << "Could not create window : " << SDL_GetError() << endl;
-		exit(-1);
-	}
-
-	app.renderer = SDL_CreateRenderer(app.window, -1, SDL_RENDERER_ACCELERATED);
-	if (!app.renderer) {
-		cout << "Could not create renderer : " << SDL_GetError() << endl;
-		exit(-1);
-	}
-
-	if (!IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG)) {
-		cout << "Could not initialize SDL Image : " << SDL_GetError() << endl;
-		exit(-1);
-	}
-
-	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
-		cout << "Could not initialize SDL Mixer : " << SDL_GetError() << endl;
-		exit(-1);
-	}
-
-	if (TTF_Init() == -1) {
-		cout << "Could not initialize SDL TTF : " << SDL_GetError() << endl;
-		exit(-1);
-	}
-
-	Mix_AllocateChannels(8);
-
-	backgroundX = 0;
-
-	app.playing = false;
-	app.background = loadTexture("./resources/gfx/background.png");
-
-	//player.setTexture(loadTexture("gfx/player.png"));
-	playerBullet.setDX(PLAYER_BULLET_SPEED);
-	playerBullet.setHealth(1);
-	//playerBullet.setTexture(loadTexture("gfx/playerBullet.png"));
-	enemyBulletTexture = loadTexture("./resources/gfx/alienBullet.png");
-	enemyTexture = loadTexture("./resources/gfx/enemy.png");
-
-	music = Mix_LoadMUS("./resources/music/backgroundMusic.ogg");
-	explosionSound = Mix_LoadWAV("./resources/sound/enemyExplosion.ogg");
-	playerExplosionSound = Mix_LoadWAV("./resources/sound/explosionSound.wav");
-	buttonSound = Mix_LoadWAV("./resources/sound/buttonSound.mp3");
-	bulletSound = Mix_LoadWAV("./resources/sound/bulletSound.ogg");
-	powerupSound = Mix_LoadWAV("./resources/sound/earnPowerUp.ogg");
-
-	explosionTexture = loadTexture("./resources/gfx/explosion.png");
-	font = TTF_OpenFont("./resources/font/Goldeneye.ttf", 28);
-	titleFont = TTF_OpenFont("./resources/font/Ghost.ttf", 90);
-	Mix_PlayMusic(music, -1);
-
-	shipModel[0] = loadTexture("./resources/gfx/spaceship/white.png");
-	shipModel[1] = loadTexture("./resources/gfx/spaceship/yellow-white.png");
-	shipModel[2] = loadTexture("./resources/gfx/spaceship/blue.png");
-	shipModel[3] = loadTexture("./resources/gfx/spaceship/green.png");
-	shipModel[4] = loadTexture("./resources/gfx/spaceship/rship.png");
-
-	bulletModel[0] = loadTexture("./resources/gfx/bulletsprites/white.png");
-	bulletModel[1] = loadTexture("./resources/gfx/bulletsprites/yellow-white.png");
-	bulletModel[2] = loadTexture("./resources/gfx/bulletsprites/blue.png");
-	bulletModel[3] = loadTexture("./resources/gfx/bulletsprites/green.png");
-	bulletModel[4] = loadTexture("./resources/gfx/bulletsprites/rship.png");
-
-	enemyBoss[0] = loadTexture("./resources/gfx/spaceship/enemyBoss1.png");
-	enemyBoss[1] = loadTexture("./resources/gfx/spaceship/enemyBoss2.png");
-	enemyBoss[2] = loadTexture("./resources/gfx/spaceship/enemyBoss3.png");
-
-	bossBullet[0] = loadTexture("./resources/gfx/bulletsprites/enemyBoss1.png");
-	bossBullet[1] = loadTexture("./resources/gfx/bulletsprites/enemyBoss2.png");
-	bossBullet[2] = loadTexture("./resources/gfx/bulletsprites/enemyBoss3.png");
-
-	//Button
-	int w, h;
-	menuButton[0].setTexture(loadTexture("./resources/gfx/startButton.png"));
-	menuButton[1].setTexture(loadTexture("./resources/gfx/guideButton.png"));
-	menuButton[2].setTexture(loadTexture("./resources/gfx/exitButton.png"));
-	for (int i = 0; i < 3; i++) {
-		menuButton[i].setX(475);
-		menuButton[i].setY(SCREEN_WIDTH / 4 + 25);
-		SDL_QueryTexture(menuButton[i].getTexture(), NULL, NULL, &w, &h);
-		menuButton[i].setW(w);
-		menuButton[i].setH(h);
-		if (i) {
-			menuButton[i].setY(menuButton[i - 1].getY() + menuButton[i - 1].getH() + 25);
-		}
-	}
-
-	arrowButton[0].setTexture(loadTexture("./resources/gfx/arrow/left.png"));
-	arrowButton[1].setTexture(loadTexture("./resources/gfx/arrow/right.png"));
-	for (int i = 0; i < 2; i++) {
-		arrowButton[i].setX(300);
-		arrowButton[i].setY(300);
-		SDL_QueryTexture(menuButton[i].getTexture(), NULL, NULL, &w, &h);
-		arrowButton[i].setW(w);
-		arrowButton[i].setH(h);
-		if (i) {
-			arrowButton[i].setX(arrowButton[i - 1].getX() + 575);
-		}
-	}
-
-	backButton.setY(600);
-	backButton.setX(450);
-	backButton.setTexture(loadTexture("./resources/gfx/backButton.png"));
-	SDL_QueryTexture(backButton.getTexture(), NULL, NULL, &w, &h);
-	backButton.setW(w);
-	backButton.setH(h);
-
-	endButton[0].setTexture(loadTexture("./resources/gfx/menuButton.png"));
-	endButton[1].setTexture(loadTexture("./resources/gfx/playButton.png"));
-	for (int i = 0; i < 2; i++) {
-		endButton[i].setX(SCREEN_WIDTH / 4 + 25);
-		endButton[i].setY(500);
-		SDL_QueryTexture(endButton[i].getTexture(), NULL, NULL, &w, &h);
-		endButton[i].setW(w);
-		endButton[i].setH(h);
-		if (i) {
-			endButton[i].setX(endButton[i - 1].getX() + endButton[i - 1].getW() + 50);
-		}
-	}
-
-	playAgain = false;
-
-	pauseIcon = loadTexture("./resources/gfx/pauseIcon.png");
-	SDL_Texture* guide = loadTexture("./resources/gfx/guide.png");
-
-	fightingBoss = 0;
-	enemySpawnTimer = 60;
-	score = 0;
-
-	ifstream fin("./data/scores.txt");
-	if (!fin.is_open()) {
-		std::cout << "Can't open file scores.txt";
-		exit(-1);
-	}
-	fin >> highScore;
-	fin.close();
-}
 
 void Game::initPlayer() {
 	player.setX(SCREEN_WIDTH / 2);
@@ -683,7 +714,9 @@ void Game::Pause() {
 	draw(pauseIcon, SCREEN_WIDTH / 2 - 210, SCREEN_HEIGHT / 2 - 225);
 	string gamepause = "GAME PAUSED";
 	SDL_Surface* pauseSf = TTF_RenderText_Solid(font, gamepause.c_str(), { 255, 255, 255, 0 });
-	SDL_Texture* pauseTXT = SDL_CreateTextureFromSurface(app.renderer, pauseSf);
+	SDL_DestroyTexture(pauseTXT);
+	pauseTXT = SDL_CreateTextureFromSurface(app.renderer, pauseSf);
+	SDL_FreeSurface(pauseSf);
 	draw(pauseTXT, SCREEN_WIDTH / 2 - 100, 3 * SCREEN_HEIGHT / 4 - 50);
 }
 
@@ -1006,23 +1039,35 @@ void Game::presentEntities() {
 
 }
 
+
+
 void Game::HUD() {
+
 	if (score > highScore) surpass = 1;
+
 	highScore = max(highScore, score);
 	scoreText << "Score : " << score;
 	hScoreText << "High Score : " << highScore;
+
+	SDL_Surface* scoreSurface = TTF_RenderText_Solid(font, scoreText.str().c_str(), { 255, 255, 255, 0 });
+	SDL_DestroyTexture(scoreTXT); 
+	scoreTXT = SDL_CreateTextureFromSurface(app.renderer, scoreSurface);
+	SDL_FreeSurface(scoreSurface);
+
+	SDL_Surface* hsSurface = TTF_RenderText_Solid(font, hScoreText.str().c_str(), { 181, 13, 13, 0 });
+	SDL_DestroyTexture(hsTXT);
+	hsTXT = SDL_CreateTextureFromSurface(app.renderer, hsSurface);
+	SDL_FreeSurface(hsSurface);
+
 	LPText << "Life Points: " << player.getHealth();
 	if (player.getDecay()) LPText << " (DECAY)";
 
-	SDL_Surface* scoreSurface = TTF_RenderText_Solid(font, scoreText.str().c_str(), { 255, 255, 255, 0 });
-	SDL_Texture* scoreTXT = SDL_CreateTextureFromSurface(app.renderer, scoreSurface);
-
-	SDL_Surface* hsSurface = TTF_RenderText_Solid(font, hScoreText.str().c_str(), { 181, 13, 13, 0 });
-	SDL_Texture* hsTXT = SDL_CreateTextureFromSurface(app.renderer, hsSurface);
-
 	SDL_Surface* LPSurface = TTF_RenderText_Solid(font, LPText.str().c_str(), { 22, 184, 17, 0 });
-	if(player.getDecay()) LPSurface = TTF_RenderText_Solid(font, LPText.str().c_str(), { 255, 99, 71, 0 });
-	SDL_Texture* LPTXT = SDL_CreateTextureFromSurface(app.renderer, LPSurface);
+	if (player.getDecay()) LPSurface = TTF_RenderText_Solid(font, LPText.str().c_str(), { 255, 99, 71, 0 });
+
+	SDL_DestroyTexture(LPTXT);
+	LPTXT = SDL_CreateTextureFromSurface(app.renderer, LPSurface);
+	SDL_FreeSurface(LPSurface);
 
 	draw(scoreTXT, 20, 20);
 	draw(hsTXT, 20, 60);
@@ -1031,14 +1076,13 @@ void Game::HUD() {
 	if (player.getStunt()) {
 		string stunt = "STUNT";
 		SDL_Surface* stuntSf = TTF_RenderText_Solid(font, stunt.c_str(), { 255, 200, 0, 0 });
-		SDL_Texture* stuntTXT = SDL_CreateTextureFromSurface(app.renderer, stuntSf);
+		SDL_DestroyTexture(stuntTXT);
+		stuntTXT = SDL_CreateTextureFromSurface(app.renderer, stuntSf);
+		SDL_FreeSurface(stuntSf);
 		draw(stuntTXT, player.getX(), player.getY() - 25);
 	}
 
 	if (fightingBoss) {
-		SDL_Texture* healthbar = loadTexture("./resources/gfx/healthbar.png");
-		SDL_Texture* bar = loadTexture("./resources/gfx/bar.png");
-
 		currbossHP = bossHP;
 		for (auto i = Enemies.begin(); i != Enemies.end(); i++) {
 			if ((*i)->getType() == 2) currbossHP = (*i)->getHealth();
@@ -1089,8 +1133,8 @@ void Game::addExplosion(int x, int y, int type) {
 
 
 void Game::addPowerUp(int x, int y, int type) {
-	if(type == 1) powerup.setTexture(loadTexture("./resources/gfx/LP.png"));
-	else if(type == 2) powerup.setTexture(loadTexture("./resources/gfx/enhanceATK.png"));
+	if(type == 1) powerup.setTexture(powerUp1);
+	else if(type == 2) powerup.setTexture(powerUp2);
 	powerup.setX(x + 20);
 	powerup.setY(y + 20);
 	powerup.setDX( -rand() % 5  - 1);

@@ -66,13 +66,34 @@ private:
 	Button arrowButton[2];
 	Button backButton;
 	Button playButton;
+
+	SDL_Texture* Buttons[18];
 	SDL_Texture* guide;
 	bool playAgain;
+	SDL_Texture* lock;
+	SDL_Texture* healthbar;
+	SDL_Texture* bar;
+	SDL_Texture* powerUp1;
+	SDL_Texture* powerUp2;
 
 	//score
 	int score, highScore;
 	bool surpass = 0;
+	SDL_Texture* scoreTXT = NULL;
+	SDL_Texture* hsTXT = NULL;
+	SDL_Texture* LPTXT =  NULL;
+	SDL_Texture* stuntTXT = NULL;
+	SDL_Texture* requireTXT = NULL;
+	SDL_Texture* currTXT = NULL;
+	SDL_Texture* pauseTXT = NULL;
+	SDL_Rect srclock;
+	//string stunt = "STUNT";
+
+	/*SDL_Surface* scoreSurface;
+	SDL_Surface* hsSurface;
+	SDL_Surface* LPSurface;*/
 	std::stringstream scoreText, hScoreText, LPText;
+
 
 
 	void initGame();
