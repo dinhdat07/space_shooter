@@ -13,199 +13,51 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Resource Files\sound">
-      <UniqueIdentifier>{b3e94869-184e-43a8-a0b8-1facb8b759a6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\fonts">
-      <UniqueIdentifier>{4b64772e-63f6-4eed-b1cf-aadaa1e65920}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\gfx">
-      <UniqueIdentifier>{c12b04d3-a8da-4250-8484-3695e9324739}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\music">
-      <UniqueIdentifier>{011219e6-b911-4f52-84e2-bef36dd850f0}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Font Include="font\Ghost.ttf">
-      <Filter>Resource Files\fonts</Filter>
-    </Font>
-    <Font Include="font\Goldeneye.ttf">
-      <Filter>Resource Files\fonts</Filter>
-    </Font>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\SpaceShooter\common.h">
+    <ClInclude Include="src\Button.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\SpaceShooter\Enemy.hpp">
+    <ClInclude Include="src\common.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\SpaceShooter\Entity.hpp">
+    <ClInclude Include="src\Effect.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\SpaceShooter\Game.hpp">
+    <ClInclude Include="src\Enemy.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\SpaceShooter\Player.hpp">
+    <ClInclude Include="src\Entity.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\SpaceShooter\Effect.hpp">
+    <ClInclude Include="src\Game.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\SpaceShooter\Button.hpp">
+    <ClInclude Include="src\Player.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\SpaceShooter\Enemy.cpp">
+    <ClCompile Include="src\Button.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\SpaceShooter\Entity.cpp">
+    <ClCompile Include="src\Effect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\SpaceShooter\Game.cpp">
+    <ClCompile Include="src\Enemy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\SpaceShooter\main.cpp">
+    <ClCompile Include="src\Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\SpaceShooter\Player.cpp">
+    <ClCompile Include="src\Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\SpaceShooter\Effect.cpp">
+    <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\SpaceShooter\Button.cpp">
+    <ClCompile Include="src\Player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="sound\bulletSound.ogg">
-      <Filter>Resource Files\sound</Filter>
-    </None>
-    <None Include="sound\earnPowerUp.ogg">
-      <Filter>Resource Files\sound</Filter>
-    </None>
-    <None Include="sound\enemyBulletSound.ogg">
-      <Filter>Resource Files\sound</Filter>
-    </None>
-    <None Include="sound\enemyExplosion.ogg">
-      <Filter>Resource Files\sound</Filter>
-    </None>
-    <None Include="sound\explosionSound.ogg">
-      <Filter>Resource Files\sound</Filter>
-    </None>
-    <None Include="music\backgroundMusic.ogg">
-      <Filter>Resource Files\music</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="gfx\alienBullet.png">
-      <Filter>Resource Files\gfx</Filter>
-    </Image>
-    <Image Include="gfx\backButton.png">
-      <Filter>Resource Files\gfx</Filter>
-    </Image>
-    <Image Include="gfx\background.png">
-      <Filter>Resource Files\gfx</Filter>
-    </Image>
-    <Image Include="gfx\backHoverButton.png">
-      <Filter>Resource Files\gfx</Filter>
-    </Image>
-    <Image Include="gfx\Button.png">
-      <Filter>Resource Files\gfx</Filter>
-    </Image>
-    <Image Include="gfx\enemy.png">
-      <Filter>Resource Files\gfx</Filter>
-    </Image>
-    <Image Include="gfx\enemyR.png">
-      <Filter>Resource Files\gfx</Filter>
-    </Image>
-    <Image Include="gfx\enhanceATK.png">
-      <Filter>Resource Files\gfx</Filter>
-    </Image>
-    <Image Include="gfx\exitButton.png">
-      <Filter>Resource Files\gfx</Filter>
-    </Image>
-    <Image Include="gfx\exitHoverButton.png">
-      <Filter>Resource Files\gfx</Filter>
-    </Image>
-    <Image Include="gfx\explosion.png">
-      <Filter>Resource Files\gfx</Filter>
-    </Image>
-    <Image Include="gfx\font.png">
-      <Filter>Resource Files\gfx</Filter>
-    </Image>
-    <Image Include="gfx\guide.png">
-      <Filter>Resource Files\gfx</Filter>
-    </Image>
-    <Image Include="gfx\guideButton.png">
-      <Filter>Resource Files\gfx</Filter>
-    </Image>
-    <Image Include="gfx\guideHoverButton.png">
-      <Filter>Resource Files\gfx</Filter>
-    </Image>
-    <Image Include="gfx\hoverButton.png">
-      <Filter>Resource Files\gfx</Filter>
-    </Image>
-    <Image Include="gfx\LP.png">
-      <Filter>Resource Files\gfx</Filter>
-    </Image>
-    <Image Include="gfx\menuButton.png">
-      <Filter>Resource Files\gfx</Filter>
-    </Image>
-    <Image Include="gfx\menuHoverButton.png">
-      <Filter>Resource Files\gfx</Filter>
-    </Image>
-    <Image Include="gfx\pauseIcon (2).png">
-      <Filter>Resource Files\gfx</Filter>
-    </Image>
-    <Image Include="gfx\pauseIcon.png">
-      <Filter>Resource Files\gfx</Filter>
-    </Image>
-    <Image Include="gfx\playButton.png">
-      <Filter>Resource Files\gfx</Filter>
-    </Image>
-    <Image Include="gfx\player.png">
-      <Filter>Resource Files\gfx</Filter>
-    </Image>
-    <Image Include="gfx\playerBullet.png">
-      <Filter>Resource Files\gfx</Filter>
-    </Image>
-    <Image Include="gfx\playerR.png">
-      <Filter>Resource Files\gfx</Filter>
-    </Image>
-    <Image Include="gfx\playHoverButton.png">
-      <Filter>Resource Files\gfx</Filter>
-    </Image>
-    <Image Include="gfx\points.png">
-      <Filter>Resource Files\gfx</Filter>
-    </Image>
-    <Image Include="gfx\sdl2.png">
-      <Filter>Resource Files\gfx</Filter>
-    </Image>
-    <Image Include="gfx\shooter.png">
-      <Filter>Resource Files\gfx</Filter>
-    </Image>
-    <Image Include="gfx\spaceBackgroundR.png">
-      <Filter>Resource Files\gfx</Filter>
-    </Image>
-    <Image Include="gfx\startButton.png">
-      <Filter>Resource Files\gfx</Filter>
-    </Image>
-    <Image Include="gfx\startHoverButton.png">
-      <Filter>Resource Files\gfx</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <Media Include="sound\buttonSound.mp3">
-      <Filter>Resource Files\sound</Filter>
-    </Media>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="scores.txt">
-      <Filter>Source Files</Filter>
-    </Text>
   </ItemGroup>
 </Project>

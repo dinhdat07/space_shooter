@@ -1,7 +1,7 @@
-E:\CODING\MyGame\SpaceShooter\Button.cpp;E:\CODING\MyGame\SpaceShooter\x64\Debug\Button.obj
-E:\CODING\MyGame\SpaceShooter\Effect.cpp;E:\CODING\MyGame\SpaceShooter\x64\Debug\Effect.obj
-E:\CODING\MyGame\SpaceShooter\Enemy.cpp;E:\CODING\MyGame\SpaceShooter\x64\Debug\Enemy.obj
-E:\CODING\MyGame\SpaceShooter\Entity.cpp;E:\CODING\MyGame\SpaceShooter\x64\Debug\Entity.obj
-E:\CODING\MyGame\SpaceShooter\Game.cpp;E:\CODING\MyGame\SpaceShooter\x64\Debug\Game.obj
-E:\CODING\MyGame\SpaceShooter\main.cpp;E:\CODING\MyGame\SpaceShooter\x64\Debug\main.obj
-E:\CODING\MyGame\SpaceShooter\Player.cpp;E:\CODING\MyGame\SpaceShooter\x64\Debug\Player.obj
+E:\CODING\MyGame\SpaceShooter\src\Button.cpp;E:\CODING\MyGame\SpaceShooter\x64\Debug\Button.obj
+E:\CODING\MyGame\SpaceShooter\src\Effect.cpp;E:\CODING\MyGame\SpaceShooter\x64\Debug\Effect.obj
+E:\CODING\MyGame\SpaceShooter\src\Enemy.cpp;E:\CODING\MyGame\SpaceShooter\x64\Debug\Enemy.obj
+E:\CODING\MyGame\SpaceShooter\src\Entity.cpp;E:\CODING\MyGame\SpaceShooter\x64\Debug\Entity.obj
+E:\CODING\MyGame\SpaceShooter\src\Game.cpp;E:\CODING\MyGame\SpaceShooter\x64\Debug\Game.obj
+E:\CODING\MyGame\SpaceShooter\src\main.cpp;E:\CODING\MyGame\SpaceShooter\x64\Debug\main.obj
+E:\CODING\MyGame\SpaceShooter\src\Player.cpp;E:\CODING\MyGame\SpaceShooter\x64\Debug\Player.obj

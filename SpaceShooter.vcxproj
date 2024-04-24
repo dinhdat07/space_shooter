@@ -19,74 +19,22 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <Font Include="font\Ghost.ttf" />
-    <Font Include="font\Goldeneye.ttf" />
+    <ClInclude Include="src\Button.hpp" />
+    <ClInclude Include="src\common.h" />
+    <ClInclude Include="src\Effect.hpp" />
+    <ClInclude Include="src\Enemy.hpp" />
+    <ClInclude Include="src\Entity.hpp" />
+    <ClInclude Include="src\Game.hpp" />
+    <ClInclude Include="src\Player.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\SpaceShooter\Button.hpp" />
-    <ClInclude Include="..\SpaceShooter\common.h" />
-    <ClInclude Include="..\SpaceShooter\Effect.hpp" />
-    <ClInclude Include="..\SpaceShooter\Enemy.hpp" />
-    <ClInclude Include="..\SpaceShooter\Entity.hpp" />
-    <ClInclude Include="..\SpaceShooter\Game.hpp" />
-    <ClInclude Include="..\SpaceShooter\Player.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\SpaceShooter\Button.cpp" />
-    <ClCompile Include="..\SpaceShooter\Effect.cpp" />
-    <ClCompile Include="..\SpaceShooter\Enemy.cpp" />
-    <ClCompile Include="..\SpaceShooter\Entity.cpp" />
-    <ClCompile Include="..\SpaceShooter\Game.cpp" />
-    <ClCompile Include="..\SpaceShooter\main.cpp" />
-    <ClCompile Include="..\SpaceShooter\Player.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="music\backgroundMusic.ogg" />
-    <None Include="sound\bulletSound.ogg" />
-    <None Include="sound\earnPowerUp.ogg" />
-    <None Include="sound\enemyBulletSound.ogg" />
-    <None Include="sound\enemyExplosion.ogg" />
-    <None Include="sound\explosionSound.ogg" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="gfx\alienBullet.png" />
-    <Image Include="gfx\backButton.png" />
-    <Image Include="gfx\background.png" />
-    <Image Include="gfx\backHoverButton.png" />
-    <Image Include="gfx\Button.png" />
-    <Image Include="gfx\enemy.png" />
-    <Image Include="gfx\enemyR.png" />
-    <Image Include="gfx\enhanceATK.png" />
-    <Image Include="gfx\exitButton.png" />
-    <Image Include="gfx\exitHoverButton.png" />
-    <Image Include="gfx\explosion.png" />
-    <Image Include="gfx\font.png" />
-    <Image Include="gfx\guide.png" />
-    <Image Include="gfx\guideButton.png" />
-    <Image Include="gfx\guideHoverButton.png" />
-    <Image Include="gfx\hoverButton.png" />
-    <Image Include="gfx\LP.png" />
-    <Image Include="gfx\menuButton.png" />
-    <Image Include="gfx\menuHoverButton.png" />
-    <Image Include="gfx\pauseIcon (2).png" />
-    <Image Include="gfx\pauseIcon.png" />
-    <Image Include="gfx\playButton.png" />
-    <Image Include="gfx\player.png" />
-    <Image Include="gfx\playerBullet.png" />
-    <Image Include="gfx\playerR.png" />
-    <Image Include="gfx\playHoverButton.png" />
-    <Image Include="gfx\points.png" />
-    <Image Include="gfx\sdl2.png" />
-    <Image Include="gfx\shooter.png" />
-    <Image Include="gfx\spaceBackgroundR.png" />
-    <Image Include="gfx\startButton.png" />
-    <Image Include="gfx\startHoverButton.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Media Include="sound\buttonSound.mp3" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="scores.txt" />
+    <ClCompile Include="src\Button.cpp" />
+    <ClCompile Include="src\Effect.cpp" />
+    <ClCompile Include="src\Enemy.cpp" />
+    <ClCompile Include="src\Entity.cpp" />
+    <ClCompile Include="src\Game.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Player.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
@@ -140,6 +88,13 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>C:\Program Files\SDL2_lib\SDL2-2.28.5\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LibraryPath>C:\Program Files\SDL2_lib\SDL2-2.28.5\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Program Files\SDL2_lib\SDL2-2.28.5\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -175,6 +130,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Program Files\SDL2_lib\SDL2_image-2.8.2\include;C:\Program Files\SDL2_lib\SDL2_mixer-2.8.0\include;C:\Program Files\SDL2_lib\SDL2_ttf-2.22.0\include;C:\Program Files\SDL2_lib\SDL2-2.28.5\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -191,12 +147,15 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Program Files\SDL2_lib\SDL2_mixer-2.8.0\include;C:\Program Files\SDL2_lib\SDL2_image-2.8.2\include;C:\Program Files\SDL2_lib\SDL2_ttf-2.22.0\include;C:\Program Files\SDL2_lib\SDL2_net-2.2.0\include;C:\Program Files\SDL2_lib\SDL2-2.28.5\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2test.lib;SDL2_image.lib;SDL2_mixer.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Program Files\SDL2_lib\SDL2_image-2.8.2\lib\x64;C:\Program Files\SDL2_lib\SDL2_net-2.2.0\lib\x64;C:\Program Files\SDL2_lib\SDL2_mixer-2.8.0\lib\x64;C:\Program Files\SDL2_lib\SDL2-2.28.5\lib\x64;C:\Program Files\SDL2_lib\SDL2_ttf-2.22.0\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
