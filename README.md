@@ -1,16 +1,48 @@
 # Space Shooter
 
-## Table of Contents
-1. Introduction
-2. Features
-3. Installation
-4. Usage
-5. Acknowledgments
+GAME DEMO: <update later>
 
 ## Introduction
 Welcome to the **Space Shooter** game! This is an exciting and action-packed game developed as part of the Advanced Programming INT2215 course. In this game, players take control of a spaceship and navigate it to shoot down enemies and avoiding their bullets.
 
 ![Screenshot 2024-04-22 110108](https://github.com/dinhdat07/space_shooter/assets/117900502/f4621c58-c1cd-4e59-93a8-a17a9730ec70)
+
+1. Game Resources
+2. Source Code Structure 
+3. Features
+4. Installation and Usage
+5. Acknowledgments
+
+## Game Resources
+### Fonts & Graphics
+- **Sources**: Acquired from various online repositories.
+- **Usage**: Utilized for game interfaces and visual elements.
+### Sound & Music
+- **Provider**: Parallel Realities.
+- **Integration**: Incorporated to enhance the gameplay experience.
+
+## Source Code Structure
+### `common.h`
+- **Purpose**: Manages essential libraries and shared variables across the program.
+### `Game`
+- **Components**: important variables for the game (e.g., main objects, sounds, fonts, scores, GUI).
+- **Functionality**: Contains functions for game execution, including display of main and instruction screens, and essential game loop operations.
+ 
+### `Entity`
+- **Management**: Manages object coordinates (x, y) and movement (dx, dy).
+- **Classification**: categorizes and archives object textures.
+### `Player` (subclass of `Entity`)
+- **Inheritance**: Gains attributes from `Entity`.
+- **Enhancements**: variables for input handling (up, down, left, right, fire), state management (reload, enhance, decay, stunt, RGBTimer) and variables for reload rate (reloadRate) and damage rate (damageRate).
+### `Enemy` (subclass of `Entity`)
+- **Inheritance**: Inherits `Entity` characteristics.
+- **Enhancements**: variables for shooting mechanics (reload, fire) and color state tracking (RGBTimer).
+### `Effect`
+- **Attributes**: Color properties (r, g, b, a) for simplified explosion effect management.
+ 
+### `Button`
+- **Basics**: Fundamental variables for position, size, and texture storage.
+- **Interaction**: State variable for hover detection (hovered).
 
 
 ## Features
@@ -62,28 +94,32 @@ Space Shooter currently features 5 warriors:
 ![rship](https://github.com/dinhdat07/space_shooter/assets/117900502/c64dd1a6-2212-4e9e-9c6c-0ce64957c60e)
 
 
-## Installation
+## Installation and Usage
 
-To install and run the game, follow these steps:
+### Option 1: Game Download Without Source Code
+•	Acquisition: Obtain the game in a compressed .zip format directly from the official release page.
 
-1. **Clone the repository**: Use the command `git clone https://github.com/.../spaceshooter.git` to clone the repository to your local machine.
+•	Efficiency: This approach is memory-efficient and expedites the download process, with the file size approximately 7MB.
 
-2. **Navigate to the project directory**: Use the command `cd spaceshooter` to navigate to the project directory.
+•	Execution: After downloading, extract the contents to a designated folder and execute SpaceShooter.exe to commence gameplay.
 
-3. **Open the project in Visual Studio **: Open Visual Studio, then choose `File > Open Folder` and select the `spaceshooter` directory.
+### Option 2: Game Download With Source Code (Compilable)
+•	Step 1: Clone the repository to your local machine, use the command `git clone https://github.com/dinhdat07/space_shooter.git`. Alternatively, download a zipped archive of the code by selecting ‘Code’ -> ‘Download Zip’. Code Repository: All source code is located within the src folder. To begin playing immediately, proceed to Step 5.
 
-4. **Install SDL2**: If you haven't already, you'll need to install SDL2. You can download it from the SDL website and follow the instructions for your specific operating system.
+• Step 2: Visual Studio Setup: Install Visual Studio with the C++ development environment and ensure that the SDL2 libraries are included.
 
-5. **Build the project**: Press `Ctrl+Shift+B` to build the project. Make sure you have the necessary build tools installed and configured in Visual Studio.
+• Step 3: Project Configuration: Open the cloned repository or unzipped code in Visual Studio. Set up the project properties to link against the SDL2 libraries.
 
-## Usage
-After a successful build, you can run the game by pressing `F5` or by choosing `Run > Start Debugging` from the menu.
-In this game, you can use the arrow keys on your keyboard to move and the left control key to shoot. For additional controls, refer to the Guide section on the game menu.
+• Step 4: Compilation: Use Visual Studio’s built-in compiler to build the project. Address any issues or dependencies that arise during the compilation process.
+
+• Step 5: Game Launch: After a successful build, run the generated SpaceShooter.exe from within Visual Studio to start the game and enjoy the experience.
+
 
 ## Acknowledgments
 We would like to express our gratitude to the following:
 
 - The instructors of the Advanced Programming course for their guidance and support throughout the development of this project.
-- Lazyfoo and Parallel Realities for providing invaluable instructions and resources that greatly aided the development of this game.
+- Lazyfoo [https://lazyfoo.net/tutorials/SDL/] and Parallel Realities [https://www.parallelrealities.co.uk/tutorials/#shooter] for providing invaluable instructions and resources that greatly aided the development of this game:
+
 
 Thank you for your interest in my Space Shooter. Enjoy the game!
