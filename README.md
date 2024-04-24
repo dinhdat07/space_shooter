@@ -5,20 +5,20 @@ GAME DEMO: <update later>
 ## Introduction
 Welcome to the **Space Shooter** game! This is an exciting and action-packed game developed as part of the Advanced Programming INT2215 course. In this game, players take control of a spaceship and navigate it to shoot down enemies and avoiding their bullets.
 
-![Screenshot 2024-04-22 110108](https://github.com/dinhdat07/space_shooter/assets/117900502/f4621c58-c1cd-4e59-93a8-a17a9730ec70)
+![Screenshot 2024-04-22 110108](https://github.com/dinhdat07/space_shooter/assets/117900502/8e80ea9a-138d-40df-bfa8-3898abc20c4a)
 
-1. Game Resources
-2. Source Code Structure 
-3. Features
-4. Installation and Usage
-5. Acknowledgments
+1. [Game Resources](#game-resources)
+2. [Source Code Structure](#source-code-structure)
+3. [Features](#features)
+4. [Installation and Usage](#installation-and-usage)
+5. [Acknowledgments](#acknowledgments)
 
 ## Game Resources
 ### Fonts & Graphics
 - **Sources**: Acquired from various online repositories.
 - **Usage**: Utilized for game interfaces and visual elements.
 ### Sound & Music
-- **Provider**: Parallel Realities.
+- **Sources**: Parallel Realities.
 - **Integration**: Incorporated to enhance the gameplay experience.
 
 ## Source Code Structure
@@ -97,9 +97,9 @@ Space Shooter currently features 5 warriors:
 ## Installation and Usage
 
 ### Option 1: Game Download Without Source Code
-•	Acquisition: Obtain the game in a compressed .zip format directly from the official release page.
+•	Acquisition: Obtain the game in a compressed .zip format directly from the [official release page](https://github.com/dinhdat07/space_shooter/releases).
 
-•	Efficiency: This approach is memory-efficient and expedites the download process, with the file size approximately 7MB.
+•	Efficiency: This approach is memory-efficient and expedites the download process, with the file size approximately 4MB.
 
 •	Execution: After downloading, extract the contents to a designated folder and execute SpaceShooter.exe to commence gameplay.
 
@@ -119,7 +119,8 @@ Space Shooter currently features 5 warriors:
 We would like to express our gratitude to the following:
 
 - The instructors of the Advanced Programming course for their guidance and support throughout the development of this project.
-- Lazyfoo [https://lazyfoo.net/tutorials/SDL/] and Parallel Realities [https://www.parallelrealities.co.uk/tutorials/#shooter] for providing invaluable instructions and resources that greatly aided the development of this game:
+- [andreanlay](https://github.com/andreanlay/space-shooter-sdl2) for his foundational contributions to the codebase, particularly in the development of basic objects and processing functions.
+- [Lazyfoo](https://lazyfoo.net/tutorials/SDL/) and [Parallel Realities](https://www.parallelrealities.co.uk/tutorials/#shooter) for providing invaluable instructions and resources that greatly aided the development of this game
 
 
 Thank you for your interest in my Space Shooter. Enjoy the game!
