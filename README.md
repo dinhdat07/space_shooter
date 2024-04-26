@@ -97,7 +97,7 @@ Space Shooter currently features 5 warriors:
 ## Installation and Usage
 
 ### Option 1: Game Download Without Source Code
-•	Acquisition: Obtain the game in a compressed .zip format directly from the [official release page](https://github.com/dinhdat07/space_shooter/releases).
+•	Acquisition: Obtain the game in a compressed .rar format directly from the [official release page](https://github.com/dinhdat07/space_shooter/releases).
 
 •	Efficiency: This approach is memory-efficient and expedites the download process, with the file size approximately 4MB.
 
