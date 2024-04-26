@@ -1,6 +1,6 @@
 # Space Shooter
 
-GAME DEMO: https://drive.google.com/file/d/1SSiRljJifLJwMTWg2Eivy26C9GrG0c14/view?usp=sharing
+GAME DEMO: https://drive.google.com/file/d/1cffzCQohXsu4BaqqAR8F5qMLv4eXa2hZ/view?usp=sharing
 
 ## Introduction
 Welcome to the **Space Shooter** game! This is an exciting and action-packed game developed as part of the Advanced Programming INT2215 course. In this game, players take control of a spaceship and navigate it to shoot down enemies and avoiding their bullets.
